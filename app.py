@@ -34,30 +34,26 @@ def transcribe_audio():
         )  # Create the directory if it doesn't exist
         converted_audio_dir.mkdir(parents=True, exist_ok=True)
 
-        # Use a fixed filename for the audio
-        temp_filename = original_audio_dir / "audio.wav"
-        converted_filename = converted_audio_dir / "audio.wav"
+        # Determine the next available filename in the original audio directory
+        existing_files = list(original_audio_dir.glob("*.wav"))
+        print(
+            f"Existing files in original directory: {existing_files}"
+        )  # Log existing files
+        next_file_num = len(existing_files) + 1
+        temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
 
         # Save the audio file
         audio_file.save(temp_filename)
         print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
         # Convert the audio file to WAV format using ffmpeg
-        result = subprocess.run(
-            ["ffmpeg", "-i", str(temp_filename), str(converted_filename)],
-            capture_output=True,
-            text=True,
+        converted_filename = (
+            converted_audio_dir / f"converted_audio_{next_file_num}.wav"
         )
-        print("ffmpeg stdout:", result.stdout)
-        print("ffmpeg stderr:", result.stderr)
-
-        if result.returncode != 0:
-            print("ffmpeg command failed with return code:", result.returncode)
-
-        if os.path.exists(converted_filename):
-            print(f"{converted_filename} exists after conversion!")
-        else:
-            print(f"{converted_filename} does not exist after conversion!")
+        subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
+        print(
+            f"Converted audio saved as: {converted_filename}"
+        )  # Log converted file name
 
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
