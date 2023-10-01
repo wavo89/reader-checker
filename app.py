@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, render_template
 import openai
 import os
 import subprocess
+import pathlib
 from accuracy_checker import calculate_accuracy
 
 app = Flask(__name__)
@@ -20,20 +21,25 @@ def transcribe_audio():
     if audio_file:
         print("Audio received. Processing...")
 
-        # Save the audio file temporarily
-        temp_filename = "temp_audio"
+        # Determine the next available filename in the audio-input directory
+        audio_dir = pathlib.Path("audio-input")
+        audio_dir.mkdir(exist_ok=True)  # Create the directory if it doesn't exist
+        existing_files = list(audio_dir.glob("*.wav"))
+        next_file_num = len(existing_files) + 1
+        temp_filename = audio_dir / f"audio_{next_file_num}.wav"
+
+        # Save the audio file
         audio_file.save(temp_filename)
 
-        # Convert the audio file to WAV format using ffmpeg
-        converted_filename = "converted_audio.wav"
-        subprocess.run(["ffmpeg", "-i", temp_filename, converted_filename])
+        # Convert the audio file to WAV format using ffmpeg (if needed)
+        converted_filename = audio_dir / f"converted_audio_{next_file_num}.wav"
+        subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
 
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
-            os.remove(temp_filename)
-            os.remove(converted_filename)
+            # No need to remove the file if you want to keep it
             return jsonify({"transcript": transcribed_text})
 
 
