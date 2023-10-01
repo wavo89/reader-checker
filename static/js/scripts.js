@@ -40,9 +40,10 @@ function stopRecording() {
   let tracks = mediaRecorder.stream.getTracks();
   tracks.forEach((track) => track.stop());
 
-  document.getElementById("recordButton").innerText = "Start Recording";
+  document.getElementById("recordButton").innerText =
+    "Uploading and Transcribing...";
   isRecording = false;
-  console.log("Recording stopped");
+  transcribeAudio();
 }
 
 function transcribeAudio() {
@@ -58,6 +59,7 @@ function transcribeAudio() {
   })
     .then((response) => response.json())
     .then((data) => {
+      document.getElementById("recordButton").innerText = "Start Recording";
       document.getElementById(
         "transcriptResult",
       ).innerText = `Transcript: ${data.transcript}`;

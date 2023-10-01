@@ -16,22 +16,21 @@ body {
   width: 60%;
 }
 
-textarea, button, #sceneText {
+textarea, button, #sceneText, #transcriptResult, #accuracyResult {
   margin: 10px;
   padding: 10px;
   border: none;
   border-radius: 5px;
   font-size: 16px;
   transition: all 0.3s ease;
+  box-sizing: border-box;
+  width: 100%;
 }
 
-#sceneText {
+#sceneText, #transcriptResult, #accuracyResult {
   background-color: rgba(255, 255, 255, 0.6);
   color: #333;
-  padding: 15px;
-  width: calc(100% - 30px); /* Subtract the total horizontal padding (15px left + 15px right) */
   border-radius: 10px;
-  box-sizing: border-box;
 }
 
 button {
@@ -42,13 +41,4 @@ button {
 
 button:hover {
   background-color: #45a049;
-}
-
-#transcriptResult, #accuracyResult {
-  background-color: rgba(255, 255, 255, 0.8);
-  padding: 10px;
-  border-radius: 5px;
-  width: 80%;
-  max-width: 500px;
-  text-align: center;
 }
