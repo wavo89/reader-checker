@@ -1,1 +1,4 @@
-.env
+audio-input/original/*
+audio-input/converted/*
+!audio-input/original/.gitkeep
+!audio-input/converted/.gitkeep
