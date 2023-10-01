@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify, render_template, send_from_directory
 import openai
 import os
 import subprocess
@@ -12,6 +12,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/scenes/<filename>")
+def serve_scene_file(filename):
+    return send_from_directory("scenes", filename)
 
 
 @app.route("/transcribe-audio", methods=["POST"])
