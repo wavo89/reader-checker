@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Accuracy Checker</title>
+</head>
+<body>
+    <textarea id="originalText" placeholder="Enter the text you're going to read"></textarea>
+    <button id="recordButton" onclick="toggleRecording()">Start Recording</button>
+    <button onclick="transcribeAudio()">Transcribe</button>
+    <button onclick="checkAccuracy()">Check Accuracy</button>
+    <p id="transcriptResult"></p>
+    <p id="accuracyResult"></p>
+    <script src="static/js/scripts.js"></script>
+</body>
+</html>
