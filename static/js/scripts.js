@@ -25,6 +25,10 @@ function startRecording() {
 
 function stopRecording() {
   mediaRecorder.stop();
+  // Explicitly release the microphone
+  let tracks = mediaRecorder.stream.getTracks();
+  tracks.forEach((track) => track.stop());
+
   document.getElementById("recordButton").innerText = "Start Recording";
   isRecording = false;
   console.log("Recording stopped");
