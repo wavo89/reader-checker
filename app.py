@@ -50,7 +50,6 @@ def transcribe_audio():
             return jsonify({"transcript": transcribed_text})
 
 
-# test
 @app.route("/check-accuracy", methods=["POST"])
 def check_accuracy_route():
     original_text = request.form.get("originalText", "")
