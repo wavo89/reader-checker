@@ -10,7 +10,7 @@ window.onload = function () {
       let firstSceneKey = Object.keys(data)[0];
       let firstScene = data[firstSceneKey];
       document.getElementById("sceneText").innerText = firstScene.text;
-      document.body.style.backgroundImage = `url('/static/${firstScene.image}')`;
+      document.body.style.backgroundImage = `url('/static/images/${firstScene.image}')`; // Corrected the path here
     });
 };
 
