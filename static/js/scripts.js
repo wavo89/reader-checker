@@ -2,7 +2,7 @@ let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
 
-// Load the first scene's text when the page loads
+// Load the first scene's text and background when the page loads
 window.onload = function () {
   fetch("/static/scenes.json")
     .then((response) => response.json())
@@ -10,6 +10,7 @@ window.onload = function () {
       let firstSceneKey = Object.keys(data)[0];
       let firstScene = data[firstSceneKey];
       document.getElementById("sceneText").innerText = firstScene.text;
+      document.body.style.backgroundImage = `url('/static/${firstScene.image}')`;
     });
 };
 
