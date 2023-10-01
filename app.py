@@ -21,22 +21,30 @@ def transcribe_audio():
     if audio_file:
         print("Audio received. Processing...")
 
-        # Determine the next available filename in the audio-input directory
-        audio_dir = pathlib.Path("audio-input")
-        audio_dir.mkdir(exist_ok=True)  # Create the directory if it doesn't exist
-        existing_files = list(audio_dir.glob("*.wav"))
+        # Directories for original and converted audio files
+        original_audio_dir = pathlib.Path("audio-input/original")
+        converted_audio_dir = pathlib.Path("audio-input/converted")
+        original_audio_dir.mkdir(
+            parents=True, exist_ok=True
+        )  # Create the directory if it doesn't exist
+        converted_audio_dir.mkdir(parents=True, exist_ok=True)
+
+        # Determine the next available filename in the original audio directory
+        existing_files = list(original_audio_dir.glob("*.wav"))
         print(
-            f"Existing files before saving new audio: {existing_files}"
+            f"Existing files in original directory: {existing_files}"
         )  # Log existing files
         next_file_num = len(existing_files) + 1
-        temp_filename = audio_dir / f"audio_{next_file_num}.wav"
+        temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
 
         # Save the audio file
         audio_file.save(temp_filename)
         print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
-        # Convert the audio file to WAV format using ffmpeg (if needed)
-        converted_filename = audio_dir / f"converted_audio_{next_file_num}.wav"
+        # Convert the audio file to WAV format using ffmpeg
+        converted_filename = (
+            converted_audio_dir / f"converted_audio_{next_file_num}.wav"
+        )
         subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
         print(
             f"Converted audio saved as: {converted_filename}"
@@ -46,7 +54,6 @@ def transcribe_audio():
             response = openai.Audio.transcribe("whisper-1", f)
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
-            # No need to remove the file if you want to keep it
             return jsonify({"transcript": transcribed_text})
 
 
