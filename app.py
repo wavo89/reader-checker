@@ -25,15 +25,22 @@ def transcribe_audio():
         audio_dir = pathlib.Path("audio-input")
         audio_dir.mkdir(exist_ok=True)  # Create the directory if it doesn't exist
         existing_files = list(audio_dir.glob("*.wav"))
+        print(
+            f"Existing files before saving new audio: {existing_files}"
+        )  # Log existing files
         next_file_num = len(existing_files) + 1
         temp_filename = audio_dir / f"audio_{next_file_num}.wav"
 
         # Save the audio file
         audio_file.save(temp_filename)
+        print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
         # Convert the audio file to WAV format using ffmpeg (if needed)
         converted_filename = audio_dir / f"converted_audio_{next_file_num}.wav"
         subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
+        print(
+            f"Converted audio saved as: {converted_filename}"
+        )  # Log converted file name
 
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
