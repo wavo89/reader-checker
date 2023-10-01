@@ -36,22 +36,15 @@ def transcribe_audio():
         )  # Create the directory if it doesn't exist
         converted_audio_dir.mkdir(parents=True, exist_ok=True)
 
-        # Determine the next available filename in the original audio directory
-        existing_files = list(original_audio_dir.glob("*.wav"))
-        print(
-            f"Existing files in original directory: {existing_files}"
-        )  # Log existing files
-        next_file_num = len(existing_files) + 1
-        temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
+        # Use a fixed filename for the audio
+        temp_filename = original_audio_dir / "audio.wav"
+        converted_filename = converted_audio_dir / "audio.wav"
 
         # Save the audio file
         audio_file.save(temp_filename)
         print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
         # Convert the audio file to WAV format using ffmpeg
-        converted_filename = (
-            converted_audio_dir / f"converted_audio_{next_file_num}.wav"
-        )
         subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
         print(
             f"Converted audio saved as: {converted_filename}"
