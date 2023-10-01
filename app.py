@@ -1,5 +1,3 @@
-# app.py
-
 from flask import Flask, request, jsonify, render_template, send_from_directory
 import openai
 import os
@@ -45,10 +43,21 @@ def transcribe_audio():
         print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
         # Convert the audio file to WAV format using ffmpeg
-        subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
-        print(
-            f"Converted audio saved as: {converted_filename}"
-        )  # Log converted file name
+        result = subprocess.run(
+            ["ffmpeg", "-i", str(temp_filename), str(converted_filename)],
+            capture_output=True,
+            text=True,
+        )
+        print("ffmpeg stdout:", result.stdout)
+        print("ffmpeg stderr:", result.stderr)
+
+        if result.returncode != 0:
+            print("ffmpeg command failed with return code:", result.returncode)
+
+        if os.path.exists(converted_filename):
+            print(f"{converted_filename} exists after conversion!")
+        else:
+            print(f"{converted_filename} does not exist after conversion!")
 
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
