@@ -29,16 +29,12 @@ def transcribe_audio():
         # Directories for original and converted audio files
         original_audio_dir = pathlib.Path("audio-input/original")
         converted_audio_dir = pathlib.Path("audio-input/converted")
-        original_audio_dir.mkdir(
-            parents=True, exist_ok=True
-        )  # Create the directory if it doesn't exist
+        original_audio_dir.mkdir(parents=True, exist_ok=True)  # Create the directory if it doesn't exist
         converted_audio_dir.mkdir(parents=True, exist_ok=True)
 
         # Determine the next available filename in the original audio directory
         existing_files = list(original_audio_dir.glob("*.wav"))
-        print(
-            f"Existing files in original directory: {existing_files}"
-        )  # Log existing files
+        print(f"Existing files in original directory: {existing_files}")  # Log existing files
         next_file_num = len(existing_files) + 1
         temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
 
@@ -47,19 +43,12 @@ def transcribe_audio():
         print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
 
         # Convert the audio file to WAV format using ffmpeg
-        converted_filename = (
-            converted_audio_dir / f"converted_audio_{next_file_num}.wav"
-        )
-        subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)])
-        print(
-            f"Converted audio saved as: {converted_filename}"
-        )  # Log converted file name
+        converted_filename = converted_audio_dir / f"converted_audio_{next_file_num}.wav"
+        result = subprocess.run(["ffmpeg", "-i", str(temp_filename), str(converted_filename)], capture_output=True, text=True)
+        print("ffmpeg stdout:", result.stdout)
+        print("ffmpeg stderr:", result.stderr)
 
-        with open(converted_filename, "rb") as f:
-            response = openai.Audio.transcribe("whisper-1", f)
-            transcribed_text = response["text"]
-            print("Transcription completed:", transcribed_text)
-            return jsonify({"transcript": transcribed_text})
+        if result.returncode != 
 
 
 @app.route("/check-accuracy", methods=["POST"])
