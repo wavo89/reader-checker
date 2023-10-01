@@ -2,6 +2,17 @@ let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
 
+// Load the first scene's text when the page loads
+window.onload = function () {
+  fetch("/static/scenes.json")
+    .then((response) => response.json())
+    .then((data) => {
+      let firstSceneKey = Object.keys(data)[0];
+      let firstScene = data[firstSceneKey];
+      document.getElementById("sceneText").innerText = firstScene.text;
+    });
+};
+
 function toggleRecording() {
   if (isRecording) {
     stopRecording();
@@ -13,7 +24,7 @@ function toggleRecording() {
 function startRecording() {
   navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
     audioChunks = [];
-    mediaRecorder = new MediaRecorder(stream); // Removed MIME type specification
+    mediaRecorder = new MediaRecorder(stream);
     mediaRecorder.ondataavailable = (event) => {
       audioChunks.push(event.data);
     };
@@ -35,7 +46,7 @@ function stopRecording() {
 }
 
 function transcribeAudio() {
-  const audioBlob = new Blob(audioChunks); // No MIME type specified
+  const audioBlob = new Blob(audioChunks);
   console.log("Sending audio for transcription...");
 
   const formData = new FormData();
@@ -58,7 +69,7 @@ function checkAccuracy() {
   const formData = new FormData();
   formData.append(
     "originalText",
-    document.getElementById("originalText").value,
+    document.getElementById("sceneText").innerText,
   );
   formData.append(
     "transcript",
