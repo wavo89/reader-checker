@@ -59,6 +59,9 @@ function stopAndTranscribe() {
           "transcriptResult",
         ).innerText = `Transcript: ${data.transcript}`;
         console.log("Transcript from Whisper:", data.transcript);
+
+        // Automatically check accuracy after receiving the transcript
+        checkAccuracy();
       });
   };
 
