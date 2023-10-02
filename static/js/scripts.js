@@ -36,7 +36,6 @@ function startRecording() {
 
 function stopAndTranscribe() {
   mediaRecorder.onstop = function () {
-    // This code will run after the mediaRecorder has fully stopped
     let tracks = mediaRecorder.stream.getTracks();
     tracks.forEach((track) => track.stop());
     document.getElementById("recordButton").innerText = "Transcribing...";
@@ -57,37 +56,9 @@ function stopAndTranscribe() {
         document.getElementById("recordButton").innerText = "Start Recording";
         document.getElementById(
           "transcriptResult",
-        ).innerText = `Transcript: ${data.transcript}`;
-        console.log("Transcript from Whisper:", data.transcript);
-
-        // Automatically check accuracy after receiving the transcript
-        checkAccuracy();
+        ).innerText = `Transcript: ${data.transcript} | Accuracy: ${data.accuracy}%`;
       });
   };
 
-  // Stop the mediaRecorder
   mediaRecorder.stop();
-}
-
-function checkAccuracy() {
-  const formData = new FormData();
-  formData.append(
-    "originalText",
-    document.getElementById("sceneText").innerText,
-  );
-  formData.append(
-    "transcript",
-    document.getElementById("transcriptResult").innerText,
-  );
-
-  fetch("/check-accuracy", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById(
-        "accuracyResult",
-      ).innerText = `Accuracy: ${data.accuracy}%`;
-    });
 }
