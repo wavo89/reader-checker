@@ -16,7 +16,7 @@ body {
   width: 60%;
 }
 
-textarea, button, #sceneText, #transcriptResult {
+textarea, button, #sceneText, #transcriptResult, #accuracyResult {
   margin: 10px;
   padding: 10px;
   border: none;
@@ -24,27 +24,17 @@ textarea, button, #sceneText, #transcriptResult {
   font-size: 16px;
   transition: all 0.3s ease;
   box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.6);
+  color: #333;
+  border-radius: 10px;
   width: 100%;
 }
 
 #accuracyResult {
-  margin: 10px;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  transition: all 0.3s ease;
-  box-sizing: border-box;
-  width: 20%;  /* Adjusted width to be a fifth of the other labels */
-  background-color: rgba(255, 255, 255, 0.6);
-  color: #333;
-  border-radius: 10px;
-}
-
-#sceneText, #transcriptResult {
-  background-color: rgba(255, 255, 255, 0.6);
-  color: #333;
-  border-radius: 10px;
+  display: inline-block;
+  width: calc(20% - 20px); /* Adjusted width to be a fifth of the other labels minus padding */
+  min-width: 150px; /* Minimum width to ensure values like "100%" can be displayed */
+  vertical-align: top; /* Aligns the top of the element with the top of the tallest element on the line */
 }
 
 button {

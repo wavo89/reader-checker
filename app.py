@@ -72,7 +72,8 @@ def check_accuracy_route():
     original_text = request.form.get("originalText", "")
     transcript = request.form.get("transcript", "")
     accuracy = calculate_accuracy(original_text, transcript)
-    return jsonify({"accuracy": accuracy})
+    truncated_accuracy = round(accuracy)
+    return jsonify({"accuracy": truncated_accuracy})
 
 
 if __name__ == "__main__":
