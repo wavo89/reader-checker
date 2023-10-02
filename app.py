@@ -29,22 +29,18 @@ def transcribe_audio():
         # Directories for original and converted audio files
         original_audio_dir = pathlib.Path("audio-input/original")
         converted_audio_dir = pathlib.Path("audio-input/converted")
-        original_audio_dir.mkdir(
-            parents=True, exist_ok=True
-        )  # Create the directory if it doesn't exist
+        original_audio_dir.mkdir(parents=True, exist_ok=True)
         converted_audio_dir.mkdir(parents=True, exist_ok=True)
 
         # Determine the next available filename in the original audio directory
         existing_files = list(original_audio_dir.glob("*.wav"))
-        print(
-            f"Existing files in original directory: {existing_files}"
-        )  # Log existing files
+        print(f"Existing files in original directory: {existing_files}")
         next_file_num = len(existing_files) + 1
         temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
 
         # Save the audio file
         audio_file.save(temp_filename)
-        print(f"Saved new audio file as: {temp_filename}")  # Log saved file name
+        print(f"Saved new audio file as: {temp_filename}")
 
         # Convert the audio file to WAV format using ffmpeg
         converted_filename = (
@@ -82,4 +78,4 @@ def check_accuracy_route():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5001)

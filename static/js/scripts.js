@@ -1,7 +1,7 @@
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
-// ok
+
 window.onload = function () {
   fetch("/scenes/scenes.json")
     .then((response) => response.json())
@@ -36,14 +36,10 @@ function startRecording() {
 
 function stopRecording() {
   mediaRecorder.stop();
-  // Explicitly release the microphone
   let tracks = mediaRecorder.stream.getTracks();
   tracks.forEach((track) => track.stop());
-
-  document.getElementById("recordButton").innerText =
-    "Uploading and Transcribing...";
+  document.getElementById("recordButton").innerText = "Start Recording";
   isRecording = false;
-  transcribeAudio();
 }
 
 function transcribeAudio() {
