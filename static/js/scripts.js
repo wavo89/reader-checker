@@ -15,7 +15,7 @@ window.onload = function () {
 
 function toggleRecording() {
   if (isRecording) {
-    stopRecording();
+    stopAndTranscribe();
   } else {
     startRecording();
   }
@@ -34,15 +34,13 @@ function startRecording() {
   });
 }
 
-function stopRecording() {
+function stopAndTranscribe() {
   mediaRecorder.stop();
   let tracks = mediaRecorder.stream.getTracks();
   tracks.forEach((track) => track.stop());
-  document.getElementById("recordButton").innerText = "Start Recording";
+  document.getElementById("recordButton").innerText = "Transcribing...";
   isRecording = false;
-}
 
-function transcribeAudio() {
   const audioBlob = new Blob(audioChunks);
   console.log("Sending audio for transcription...");
 

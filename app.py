@@ -51,15 +51,11 @@ def transcribe_audio():
             capture_output=True,
             text=True,
         )
-        print("ffmpeg stdout:", result.stdout)
-        print("ffmpeg stderr:", result.stderr)
 
         if result.returncode != 0:
-            print(f"ffmpeg command failed with return code: {result.returncode}")
             return jsonify({"error": "Audio conversion failed."})
 
         if not converted_filename.exists():
-            print(f"{converted_filename} does not exist after conversion!")
             return jsonify({"error": "Converted audio file not found."})
 
         with open(converted_filename, "rb") as f:
@@ -67,6 +63,8 @@ def transcribe_audio():
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
             return jsonify({"transcript": transcribed_text})
+
+    return jsonify({"error": "No audio received."})
 
 
 @app.route("/check-accuracy", methods=["POST"])
