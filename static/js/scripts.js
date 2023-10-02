@@ -1,7 +1,7 @@
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
-
+// ok
 window.onload = function () {
   fetch("/scenes/scenes.json")
     .then((response) => response.json())
