@@ -35,30 +35,35 @@ function startRecording() {
 }
 
 function stopAndTranscribe() {
+  mediaRecorder.onstop = function () {
+    // This code will run after the mediaRecorder has fully stopped
+    let tracks = mediaRecorder.stream.getTracks();
+    tracks.forEach((track) => track.stop());
+    document.getElementById("recordButton").innerText = "Transcribing...";
+    isRecording = false;
+
+    const audioBlob = new Blob(audioChunks);
+    console.log("Sending audio for transcription...");
+
+    const formData = new FormData();
+    formData.append("audio", audioBlob);
+
+    fetch("/transcribe-audio", {
+      method: "POST",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        document.getElementById("recordButton").innerText = "Start Recording";
+        document.getElementById(
+          "transcriptResult",
+        ).innerText = `Transcript: ${data.transcript}`;
+        console.log("Transcript from Whisper:", data.transcript);
+      });
+  };
+
+  // Stop the mediaRecorder
   mediaRecorder.stop();
-  let tracks = mediaRecorder.stream.getTracks();
-  tracks.forEach((track) => track.stop());
-  document.getElementById("recordButton").innerText = "Transcribing...";
-  isRecording = false;
-
-  const audioBlob = new Blob(audioChunks);
-  console.log("Sending audio for transcription...");
-
-  const formData = new FormData();
-  formData.append("audio", audioBlob);
-
-  fetch("/transcribe-audio", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      document.getElementById("recordButton").innerText = "Start Recording";
-      document.getElementById(
-        "transcriptResult",
-      ).innerText = `Transcript: ${data.transcript}`;
-      console.log("Transcript from Whisper:", data.transcript);
-    });
 }
 
 function checkAccuracy() {
