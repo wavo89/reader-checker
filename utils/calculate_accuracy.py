@@ -3,7 +3,7 @@ import openai
 
 def calculate_accuracy(original_text, transcript):
     completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo-16k",
+        model="gpt-4",
         messages=[
             # {
             #     "role": "system",
