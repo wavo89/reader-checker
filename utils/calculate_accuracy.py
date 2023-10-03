@@ -18,14 +18,22 @@ def calculate_accuracy(original_text, transcript):
     # Calculate word accuracy with adjusted weights
     total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
     matching_weight = sum(
-        0.25 if len(o) <= 3 else 1
-        for o, t in zip(original_words, transcript_words)
-        if o == t
+        0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
     )
     word_accuracy = matching_weight / total_weight
 
     # Calculate word order accuracy
-    order_matches = sum(1 for o, t in zip(original_words, transcript_words) if o == t)
+    order_matches = 0
+    transcript_index = 0
+    for o in original_words:
+        if (
+            transcript_index < len(transcript_words)
+            and o == transcript_words[transcript_index]
+        ):
+            order_matches += 1
+            transcript_index += 1
+        elif o in transcript_words[transcript_index:]:
+            transcript_index = transcript_words.index(o, transcript_index) + 1
     order_accuracy = order_matches / len(original_words)
 
     # Calculate overall accuracy percentage
