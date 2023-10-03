@@ -7,7 +7,7 @@ def calculate_accuracy(original_text, transcript):
         messages=[
             {
                 "role": "system",
-                "content": "You will rate the accuracy of the transcript compared to the original text on a scale of 1 to 3. 1 being the least accurate and 3 being the most accurate. Please respond with only a number: 1, 2, or 3.",
+                "content": "You will rate the accuracy of the spoken transcript compared to the original text on a scale of 1 to 3. 1 being the least accurate and 3 being the most accurate. We are gauging student ability to read accurately, we are basically testing for phonics and word recognition. A 3 means they got 90-100 percent of words right, a 2 means they got 40-89 percent right, and a 1 means they got under 39 percent. Thats a rough guide. Ignore any differneces in punctuation. Please respond with only a number: 1, 2, or 3.",
             },
             {
                 "role": "user",
