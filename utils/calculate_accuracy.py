@@ -11,7 +11,7 @@ def calculate_accuracy(original_text, transcript):
             },
             {
                 "role": "user",
-                "content": f"Original: {original_text}. Transcript: {transcript}. How accurate is the transcript?",
+                "content": f"Original: {original_text} | Transcript: {transcript}",
             },
         ],
     )
