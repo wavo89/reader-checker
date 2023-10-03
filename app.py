@@ -79,9 +79,8 @@ def check_accuracy_route():
     print(f"Original Text: {original_text}")
     print(f"Transcript: {transcript}")
     accuracy = calculate_accuracy(original_text, transcript)
-    truncated_accuracy = round(accuracy)
-    print(f"Calculated Accuracy: {truncated_accuracy}")
-    return jsonify({"accuracy": truncated_accuracy})
+    print(f"Calculated Accuracy: {accuracy}")
+    return jsonify({"accuracy": accuracy})
 
 
 if __name__ == "__main__":
