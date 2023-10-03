@@ -22,7 +22,7 @@ def calculate_accuracy(original_text, transcript):
     )
     word_accuracy = matching_weight / total_weight
 
-    # Calculate word order accuracy
+    # Calculate word order accuracy with a penalty for added words
     order_matches = 0
     transcript_index = 0
     for o in original_words:
@@ -34,7 +34,8 @@ def calculate_accuracy(original_text, transcript):
             transcript_index += 1
         elif o in transcript_words[transcript_index:]:
             transcript_index = transcript_words.index(o, transcript_index) + 1
-    order_accuracy = order_matches / len(original_words)
+    added_words_penalty = len(transcript_words) - len(original_words)
+    order_accuracy = order_matches / (len(original_words) + max(0, added_words_penalty))
 
     # Calculate overall accuracy percentage
     overall_accuracy = (word_accuracy + order_accuracy) / 2
