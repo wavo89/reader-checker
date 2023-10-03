@@ -1,28 +1,24 @@
 import string
 
 
-def calculate_accuracy(original_text, transcript):
-    # Convert texts to lowercase
-    original_text = original_text.lower()
-    transcript = transcript.lower()
-
-    # Remove punctuation from the texts
+def preprocess_text(text):
+    """Convert text to lowercase and remove punctuation."""
+    text = text.lower()
     translator = str.maketrans("", "", string.punctuation)
-    original_text = original_text.translate(translator)
-    transcript = transcript.translate(translator)
+    return text.translate(translator)
 
-    # Tokenize both texts by spaces to get individual words
-    original_words = original_text.split()
-    transcript_words = transcript.split()
 
-    # Calculate word accuracy with adjusted weights
+def calculate_word_accuracy(original_words, transcript_words):
+    """Calculate word accuracy with adjusted weights."""
     total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
     matching_weight = sum(
         0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
     )
-    word_accuracy = matching_weight / total_weight
+    return matching_weight / total_weight
 
-    # Calculate word order accuracy with a penalty for added words
+
+def calculate_order_accuracy(original_words, transcript_words):
+    """Calculate word order accuracy with a penalty for added words."""
     order_matches = 0
     transcript_index = 0
     for o in original_words:
@@ -35,17 +31,26 @@ def calculate_accuracy(original_text, transcript):
         elif o in transcript_words[transcript_index:]:
             transcript_index = transcript_words.index(o, transcript_index) + 1
     added_words_penalty = len(transcript_words) - len(original_words)
-    order_accuracy = order_matches / (len(original_words) + max(0, added_words_penalty))
+    return order_matches / (len(original_words) + max(0, added_words_penalty))
 
-    # Calculate overall accuracy percentage
+
+def calculate_accuracy(original_text, transcript):
+    original_text = preprocess_text(original_text)
+    transcript = preprocess_text(transcript)
+
+    original_words = original_text.split()
+    transcript_words = transcript.split()
+
+    word_accuracy = calculate_word_accuracy(original_words, transcript_words)
+    order_accuracy = calculate_order_accuracy(original_words, transcript_words)
     overall_accuracy = (word_accuracy + order_accuracy) / 2
-    # test
+
     # Print the percentages and a summary of the numbers
     print(
-        f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {matching_weight:.2f}/{total_weight})"
+        f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {word_accuracy*len(original_words):.2f}/{len(original_words)})"
     )
     print(
-        f"Order Accuracy: {order_accuracy*100:.2f}% (Correct Order Matches: {order_matches}/{len(original_words)})"
+        f"Order Accuracy: {order_accuracy*100:.2f}% (Correct Order Matches: {order_accuracy*len(original_words):.2f}/{len(original_words)})"
     )
     print(f"Overall Accuracy: {overall_accuracy*100:.2f}%")
 
