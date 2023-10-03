@@ -35,6 +35,10 @@ function stopAndTranscribe() {
 
     const formData = new FormData();
     formData.append("audio", audioBlob);
+    formData.append(
+      "originalText",
+      document.getElementById("sceneText").innerText,
+    );
 
     fetch("/transcribe-audio", {
       method: "POST",
@@ -48,9 +52,8 @@ function stopAndTranscribe() {
         ).innerText = `Transcript: ${data.transcript}`;
         console.log("Transcript from Whisper:", data.transcript);
 
-        // Update accuracy display
         let accuracyBox = document.getElementById("accuracyResult");
-        if (data.accuracy == 3) {
+        if (data.accuracy == 1) {
           accuracyBox.style.backgroundColor = "green";
         } else if (data.accuracy == 2) {
           accuracyBox.style.backgroundColor = "yellow";
