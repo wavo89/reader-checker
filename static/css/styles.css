@@ -66,10 +66,26 @@ button:hover {
   background-color: #0056b3; /* Darker blue on hover for choice buttons */
 }
 
-#accuracyResultBox {
+/* #accuracyResultBox {
     width: 20px;
     height: 20px;
     border-radius: 50%;
     display: inline-block;
     vertical-align: middle;
+} */
+
+#accuracyResult {
+  display: inline-block;
+  width: calc(80% - 20px);
+  vertical-align: top;
+}
+
+#accuracyColorBox {
+  width: 20%;
+  min-width: 95px;
+  height: 36px; /* Adjust height as needed */
+  display: inline-block;
+  vertical-align: top;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
 }

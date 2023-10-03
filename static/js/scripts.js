@@ -71,8 +71,8 @@ function displayTranscriptionResults(data) {
   ).innerText = `Transcript: ${data.transcript}`;
   console.log("Transcript from Whisper:", data.transcript);
 
-  let accuracyBox = document.getElementById("accuracyResult");
-  accuracyBox.style.backgroundColor = getAccuracyColor(data.accuracy);
+  let accuracyColorBox = document.getElementById("accuracyColorBox");
+  accuracyColorBox.style.backgroundColor = getAccuracyColor(data.accuracy);
 }
 
 function getAccuracyColor(accuracy) {
