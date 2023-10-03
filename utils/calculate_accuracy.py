@@ -1,7 +1,7 @@
 import string
 
 
-def calculate_word_accuracy(original_text, transcript):
+def calculate_accuracy(original_text, transcript):
     # Remove punctuation from the texts
     translator = str.maketrans("", "", string.punctuation)
     original_text = original_text.translate(translator)
