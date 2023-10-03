@@ -42,7 +42,7 @@ function stopAndTranscribe() {
     })
       .then((response) => response.json())
       .then((data) => {
-        document.getElementById("recordButton").innerText = "Start Recording";
+        document.getElementById("recordButton").innerText = "Record";
         document.getElementById(
           "transcriptResult",
         ).innerText = `Transcript: ${data.transcript}`;
@@ -74,7 +74,7 @@ function checkAccuracy() {
   })
     .then((response) => response.json())
     .then((data) => {
-      let accuracyBox = document.getElementById("accuracyResultBox");
+      let accuracyBox = document.getElementById("accuracyResult");
       if (data.accuracy == 1) {
         accuracyBox.style.backgroundColor = "green";
       } else if (data.accuracy == 2) {
