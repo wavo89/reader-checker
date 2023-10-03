@@ -1,3 +1,6 @@
+import openai
+
+
 def calculate_accuracy(original_text, transcript):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
