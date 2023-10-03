@@ -2,6 +2,10 @@ import string
 
 
 def calculate_accuracy(original_text, transcript):
+    # Convert texts to lowercase
+    original_text = original_text.lower()
+    transcript = transcript.lower()
+
     # Remove punctuation from the texts
     translator = str.maketrans("", "", string.punctuation)
     original_text = original_text.translate(translator)
@@ -25,7 +29,7 @@ def calculate_accuracy(original_text, transcript):
     overall_accuracy = (matching_words + order_matches) / (2 * total_words)
 
     # Return a score based on the accuracy percentage
-    if 0 <= overall_accuracy <= 0.20:
+    if 0 <= overall_accuracy <= 0.25:
         return 1
     elif 0.21 <= overall_accuracy <= 0.84:
         return 2
