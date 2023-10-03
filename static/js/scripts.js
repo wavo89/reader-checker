@@ -53,7 +53,7 @@ function stopAndTranscribe() {
         console.log("Transcript from Whisper:", data.transcript);
 
         let accuracyBox = document.getElementById("accuracyResult");
-        if (data.accuracy == 1) {
+        if (data.accuracy == 3) {
           accuracyBox.style.backgroundColor = "green";
         } else if (data.accuracy == 2) {
           accuracyBox.style.backgroundColor = "yellow";
