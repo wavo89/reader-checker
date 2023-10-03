@@ -22,7 +22,7 @@ def calculate_accuracy(original_text, transcript):
         for o, t in zip(original_words, transcript_words)
         if o == t
     )
-    word_accuracy = matching_weight / total_weight
+    word_accuracy = matching_weight / max(total_weight, len(transcript_words))
 
     # Calculate word order accuracy
     order_matches = sum(1 for o, t in zip(original_words, transcript_words) if o == t)
