@@ -65,12 +65,12 @@ def transcribe_audio():
 
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
-            transcribed_text = response["text"]
+            original_text = request.form.get("originalText", "")
             print(f"Original Text: {original_text}")
+
+            transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
 
-            # Check accuracy immediately after transcription
-            original_text = request.form.get("originalText", "")
             accuracy = calculate_accuracy(original_text, transcribed_text)
             print(f"Calculated Accuracy: {accuracy}")
 
