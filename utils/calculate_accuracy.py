@@ -25,10 +25,7 @@ def calculate_accuracy(original_text, transcript):
     word_accuracy = matching_weight / total_weight
 
     # Calculate word order accuracy
-    order_matches = 0
-    for i in range(min(len(original_words), len(transcript_words))):
-        if original_words[i] == transcript_words[i]:
-            order_matches += 1
+    order_matches = sum(1 for o, t in zip(original_words, transcript_words) if o == t)
     order_accuracy = order_matches / len(original_words)
 
     # Calculate overall accuracy percentage
