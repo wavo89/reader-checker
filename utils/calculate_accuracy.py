@@ -7,7 +7,7 @@ def calculate_accuracy(original_text, transcript):
         messages=[
             {
                 "role": "system",
-                "content": "Ignore all meaning of original and transcript, we are only looking at word similarity. Do not penalize if the meaning of the wrong word is far off, that has no affect outside of being wrong.",
+                "content": "Ignore all meaning of original and transcript, we are only looking at word similarity. Do not penalize if the meaning of the wrong word is far off, that has no affect outside of being wrong. Examples- Doc1- You decide to build a cat. Doc2 - You decide to build a shed. That is a 2. Doc2 - I decide to build a shed. That is a 2. Doc2 I decide to make a farm. Thats a 1.",
             },
             {
                 "role": "user",
