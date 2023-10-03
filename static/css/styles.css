@@ -7,13 +7,15 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: center;
+  justify-content: flex-start; /* Adjusted to move content up */
   color: #333;
-  padding-left: 10%;
+  padding-left: 5%;
+  padding-top: 5%; /* Added padding to move content up */
 }
 
 #contentWrapper {
   width: 60%;
+  max-width: 480px;
 }
 
 textarea, button, #sceneText, #transcriptResult, #accuracyResult {
@@ -32,9 +34,19 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
 
 #accuracyResult {
   display: inline-block;
-  width: calc(20% - 20px); /* Adjusted width to be a fifth of the other labels minus padding */
-  min-width: 150px; /* Minimum width to ensure values like "100%" can be displayed */
-  vertical-align: top; /* Aligns the top of the element with the top of the tallest element on the line */
+  width: calc(20% - 20px);
+  min-width: 150px;
+  vertical-align: top;
+}
+
+#optionButtons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#optionButtons button {
+  width: calc(50% - 10px); /* Adjusted width to account for margin */
 }
 
 button {

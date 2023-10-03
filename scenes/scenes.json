@@ -1,6 +1,126 @@
 {
-  "a1b2c3d4e5": {
-      "text": "We seem to have drifted onto an island.",
-      "image": "bg1.png"
+  "hex1": {
+    "text": "We seem to have drifted onto an island.",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Explore the island", "link": "hex2"},
+      {"text": "Build a shelter", "link": "hex3"}
+    ]
+  },
+  "hex2": {
+    "text": "You decide to explore the island...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Climb a tree", "link": "hex4"},
+      {"text": "Go to the beach", "link": "hex5"}
+    ]
+  },
+  "hex3": {
+    "text": "You decide to build a shelter...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Gather materials", "link": "hex6"},
+      {"text": "Find a suitable location", "link": "hex7"}
+    ]
+  },
+  "hex4": {
+    "text": "You climb a tree and see...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "A waterfall", "link": "hex8"},
+      {"text": "A cave", "link": "hex9"},
+      {"text": "A mountain", "link": "hex10"},
+      {"text": "A dense forest", "link": "hex11"}
+    ]
+  },
+  "hex5": {
+    "text": "You go to the beach and find...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "A shipwreck", "link": "hex12"},
+      {"text": "A message in a bottle", "link": "hex13"},
+      {"text": "A coconut tree", "link": "hex14"},
+      {"text": "A fishing net", "link": "hex15"}
+    ]
+  },
+  "hex6": {
+    "text": "You gather materials and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Build a fire", "link": "hex1"},
+      {"text": "Craft tools", "link": "hex1"}
+    ]
+  },
+  "hex7": {
+    "text": "You find a suitable location and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Set up camp", "link": "hex1"},
+      {"text": "Dig a well", "link": "hex1"}
+    ]
+  },
+  "hex8": {
+    "text": "You approach the waterfall and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Take a swim", "link": "hex1"},
+      {"text": "Look for fish", "link": "hex1"}
+    ]
+  },
+  "hex9": {
+    "text": "You enter the cave and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Light a torch", "link": "hex1"},
+      {"text": "Sing a song", "link": "hex1"}
+    ]
+  },
+  "hex10": {
+    "text": "You climb the mountain and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Shout an echo", "link": "hex1"},
+      {"text": "Plant a flag", "link": "hex1"}
+    ]
+  },
+  "hex11": {
+    "text": "You venture into the dense forest and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Make a trail", "link": "hex1"},
+      {"text": "Hunt for food", "link": "hex1"}
+    ]
+  },
+  "hex12": {
+    "text": "You explore the shipwreck and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Find treasure", "link": "hex1"},
+      {"text": "Rescue a parrot", "link": "hex1"}
+    ]
+  },
+  "hex13": {
+    "text": "You read the message in the bottle and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Follow the map", "link": "hex1"},
+      {"text": "Write a reply", "link": "hex1"}
+    ]
+  },
+  "hex14": {
+    "text": "You climb the coconut tree and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Drink coconut water", "link": "hex1"},
+      {"text": "Make a hammock", "link": "hex1"}
+    ]
+  },
+  "hex15": {
+    "text": "You use the fishing net and...",
+    "image": "bg1.png",
+    "choices": [
+      {"text": "Catch fish", "link": "hex1"},
+      {"text": "Trap crabs", "link": "hex1"}
+    ]
   }
 }
