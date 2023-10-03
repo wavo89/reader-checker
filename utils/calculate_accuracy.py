@@ -1,4 +1,12 @@
-def calculate_accuracy(original_text, transcript):
+import string
+
+
+def calculate_word_accuracy(original_text, transcript):
+    # Remove punctuation from the texts
+    translator = str.maketrans("", "", string.punctuation)
+    original_text = original_text.translate(translator)
+    transcript = transcript.translate(translator)
+
     # Tokenize both texts by spaces to get individual words
     original_words = original_text.split()
     transcript_words = transcript.split()
@@ -13,8 +21,13 @@ def calculate_accuracy(original_text, transcript):
         if original_words[i] == transcript_words[i]:
             order_matches += 1
 
-    # Calculate percentages
-    word_accuracy_percentage = (matching_words / total_words) * 100
-    word_order_accuracy_percentage = (order_matches / total_words) * 100
+    # Calculate overall accuracy percentage
+    overall_accuracy = (matching_words + order_matches) / (2 * total_words)
 
-    return word_accuracy_percentage, word_order_accuracy_percentage
+    # Return a score based on the accuracy percentage
+    if 0 <= overall_accuracy <= 0.20:
+        return 1
+    elif 0.21 <= overall_accuracy <= 0.84:
+        return 2
+    else:
+        return 3
