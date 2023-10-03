@@ -39,7 +39,7 @@ def calculate_accuracy(original_text, transcript):
 
     # Calculate overall accuracy percentage
     overall_accuracy = (word_accuracy + order_accuracy) / 2
-
+    # test
     # Print the percentages and a summary of the numbers
     print(
         f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {matching_weight:.2f}/{total_weight})"
