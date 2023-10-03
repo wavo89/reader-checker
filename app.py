@@ -4,6 +4,7 @@ import os
 import subprocess
 import pathlib
 from accuracy_checker import calculate_accuracy
+import json
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -11,7 +12,11 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    scene_id = request.args.get("scene", "hex1")
+    with open("scenes/scenes.json", "r") as f:
+        scenes = json.load(f)
+        scene = scenes.get(scene_id, scenes["hex1"])
+    return render_template("index.html", scene=scene)
 
 
 @app.route("/scenes/<filename>")

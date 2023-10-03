@@ -2,17 +2,6 @@ let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
 
-window.onload = function () {
-  fetch("/scenes/scenes.json")
-    .then((response) => response.json())
-    .then((data) => {
-      let firstSceneKey = Object.keys(data)[0];
-      let firstScene = data[firstSceneKey];
-      document.getElementById("sceneText").innerText = firstScene.text;
-      document.body.style.backgroundImage = `url('/static/images/${firstScene.image}')`;
-    });
-};
-
 function toggleRecording() {
   if (isRecording) {
     stopAndTranscribe();
@@ -36,7 +25,6 @@ function startRecording() {
 
 function stopAndTranscribe() {
   mediaRecorder.onstop = function () {
-    // This code will run after the mediaRecorder has fully stopped
     let tracks = mediaRecorder.stream.getTracks();
     tracks.forEach((track) => track.stop());
     document.getElementById("recordButton").innerText = "Transcribing...";
@@ -86,8 +74,13 @@ function checkAccuracy() {
   })
     .then((response) => response.json())
     .then((data) => {
-      document.getElementById(
-        "accuracyResult",
-      ).innerText = `Accuracy: ${data.accuracy}%`;
+      let accuracyBox = document.getElementById("accuracyResultBox");
+      if (data.accuracy == 1) {
+        accuracyBox.style.backgroundColor = "green";
+      } else if (data.accuracy == 2) {
+        accuracyBox.style.backgroundColor = "yellow";
+      } else {
+        accuracyBox.style.backgroundColor = "red";
+      }
     });
 }

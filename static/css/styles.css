@@ -7,10 +7,10 @@ body {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-start; /* Adjusted to move content up */
+  justify-content: flex-start;
   color: #333;
   padding-left: 5%;
-  padding-top: 5%; /* Added padding to move content up */
+  padding-top: 5%;
 }
 
 #contentWrapper {
@@ -39,16 +39,6 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
   vertical-align: top;
 }
 
-#optionButtons {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
-
-#optionButtons button {
-  width: calc(50% - 10px); /* Adjusted width to account for margin */
-}
-
 button {
   background-color: #4CAF50;
   color: white;
@@ -57,4 +47,29 @@ button {
 
 button:hover {
   background-color: #45a049;
+}
+
+#choiceButtons {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 100%;
+}
+
+#choiceButtons button {
+  width: 100%;
+  margin-bottom: 10px;
+  background-color: #007BFF; /* Blue background for choice buttons */
+}
+
+#choiceButtons button:hover {
+  background-color: #0056b3; /* Darker blue on hover for choice buttons */
+}
+
+#accuracyResultBox {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: inline-block;
+    vertical-align: middle;
 }
