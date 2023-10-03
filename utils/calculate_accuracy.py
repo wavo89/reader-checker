@@ -1,4 +1,4 @@
-def calculate_word_accuracy(original_text, transcript):
+def calculate_accuracy(original_text, transcript):
     # Tokenize both texts by spaces to get individual words
     original_words = original_text.split()
     transcript_words = transcript.split()
@@ -18,11 +18,3 @@ def calculate_word_accuracy(original_text, transcript):
     word_order_accuracy_percentage = (order_matches / total_words) * 100
 
     return word_accuracy_percentage, word_order_accuracy_percentage
-
-
-# Test
-original_text = "You decide to build a shelter"
-transcript = "You decide to build a cat"
-word_accuracy, word_order = calculate_word_accuracy(original_text, transcript)
-print(f"Word Accuracy: {word_accuracy:.2f}%")
-print(f"Word Order Accuracy: {word_order:.2f}%")
