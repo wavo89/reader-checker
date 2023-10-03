@@ -48,39 +48,18 @@ function stopAndTranscribe() {
         ).innerText = `Transcript: ${data.transcript}`;
         console.log("Transcript from Whisper:", data.transcript);
 
-        // Automatically check accuracy after receiving the transcript
-        checkAccuracy();
+        // Update accuracy display
+        let accuracyBox = document.getElementById("accuracyResult");
+        if (data.accuracy == 1) {
+          accuracyBox.style.backgroundColor = "green";
+        } else if (data.accuracy == 2) {
+          accuracyBox.style.backgroundColor = "yellow";
+        } else {
+          accuracyBox.style.backgroundColor = "red";
+        }
       });
   };
 
   // Stop the mediaRecorder
   mediaRecorder.stop();
-}
-
-function checkAccuracy() {
-  const formData = new FormData();
-  formData.append(
-    "originalText",
-    document.getElementById("sceneText").innerText,
-  );
-  formData.append(
-    "transcript",
-    document.getElementById("transcriptResult").innerText,
-  );
-
-  fetch("/check-accuracy", {
-    method: "POST",
-    body: formData,
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      let accuracyBox = document.getElementById("accuracyResult");
-      if (data.accuracy == 1) {
-        accuracyBox.style.backgroundColor = "green";
-      } else if (data.accuracy == 2) {
-        accuracyBox.style.backgroundColor = "yellow";
-      } else {
-        accuracyBox.style.backgroundColor = "red";
-      }
-    });
 }

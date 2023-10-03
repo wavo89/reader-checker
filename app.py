@@ -67,7 +67,13 @@ def transcribe_audio():
             response = openai.Audio.transcribe("whisper-1", f)
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
-            return jsonify({"transcript": transcribed_text})
+
+            # Check accuracy immediately after transcription
+            original_text = request.form.get("originalText", "")
+            accuracy = calculate_accuracy(original_text, transcribed_text)
+            print(f"Calculated Accuracy: {accuracy}")
+
+            return jsonify({"transcript": transcribed_text, "accuracy": accuracy})
 
     return jsonify({"error": "No audio received."})
 
