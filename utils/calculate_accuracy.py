@@ -1,17 +1,14 @@
-import openai
-
-
 def calculate_accuracy(original_text, transcript):
     completion = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {
                 "role": "system",
-                "content": "You will rate the accuracy of the spoken transcript compared to the original text on a scale of 1 to 3. 1 being the least accurate and 3 being the most accurate. We are gauging student ability to read accurately, we are testing for phonics and word recognition. Ignore any differneces in capitalization or punctuation and small errors such as adding or missing a sound should not significantly affect the score unless it occurs a lot. Just because a response makes less sense because of the mistaken words, doesnt make it more wrong nor vice versa, it is only the accuracy of the words that we are measuring not the meaning. A 3 means they got all or nearly all right, a 2 means they got some to most right, and a 1 means they got under most wrong. Please respond with only a number: 1, 2, or 3.",
+                "content": "Your task is to evaluate the accuracy of a spoken transcript compared to the original text. The focus is on phonics and word recognition. Disregard differences in capitalization, punctuation, and minor sound additions or omissions. The meaning of the sentence is not the primary concern; instead, focus on the exactness of the words. Rate the accuracy on a scale of 1 to 3: \n\n1: The transcript has many errors and deviates significantly from the original.\n2: The transcript has some errors but retains parts of the original content.\n3: The transcript is nearly identical or matches the original text closely.\n\nPlease provide a rating based on the given scale.",
             },
             {
                 "role": "user",
-                "content": f"Original: {original_text}. Transcript: {transcript}. How accurate is the transcript?",
+                "content": f"Original: {original_text}. Transcript: {transcript}. Based on the criteria, how accurate is the transcript?",
             },
         ],
     )
