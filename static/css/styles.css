@@ -22,21 +22,21 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
   margin: 10px;
   padding: 10px;
   border: none;
-  border-radius: 5px;
+  border-radius: 10px;
   font-size: 16px;
   transition: all 0.3s ease;
   box-sizing: border-box;
   background-color: rgba(255, 255, 255, 0.6);
   color: #333;
-  border-radius: 10px;
   width: 100%;
+  min-height: 40px;
 }
 
 #accuracyResult {
   display: inline-block;
-  width: calc(20% - 20px);
-  min-width: 95px;
+  width: 120px; /* Set max-width to 120px */
   vertical-align: top;
+  margin-right: 5px;
 }
 
 button {
@@ -59,33 +59,9 @@ button:hover {
 #choiceButtons button {
   width: 100%;
   margin-bottom: 10px;
-  background-color: #007BFF; /* Blue background for choice buttons */
+  background-color: #007BFF;
 }
 
 #choiceButtons button:hover {
-  background-color: #0056b3; /* Darker blue on hover for choice buttons */
-}
-
-/* #accuracyResultBox {
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    display: inline-block;
-    vertical-align: middle;
-} */
-
-#accuracyResult {
-  display: inline-block;
-  width: calc(80% - 20px);
-  vertical-align: top;
-}
-
-#accuracyColorBox {
-  width: 20%;
-  min-width: 95px;
-  height: 36px; /* Adjust height as needed */
-  display: inline-block;
-  vertical-align: top;
-  background-color: rgba(255, 255, 255, 0.6);
-  border-radius: 5px;
+  background-color: #0056b3;
 }
