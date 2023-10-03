@@ -1,25 +1,28 @@
-import openai
+def calculate_word_accuracy(original_text, transcript):
+    # Tokenize both texts by spaces to get individual words
+    original_words = original_text.split()
+    transcript_words = transcript.split()
+
+    # Calculate word accuracy
+    matching_words = sum(1 for o, t in zip(original_words, transcript_words) if o == t)
+    total_words = len(original_words)
+
+    # Calculate word order accuracy
+    order_matches = 0
+    for i in range(min(len(original_words), len(transcript_words))):
+        if original_words[i] == transcript_words[i]:
+            order_matches += 1
+
+    # Calculate percentages
+    word_accuracy_percentage = (matching_words / total_words) * 100
+    word_order_accuracy_percentage = (order_matches / total_words) * 100
+
+    return word_accuracy_percentage, word_order_accuracy_percentage
 
 
-def calculate_accuracy(original_text, transcript):
-    completion = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=[
-            {
-                "role": "system",
-                "content": "Ignore all meaning of original and transcript, we are only looking at word similarity. Do not penalize if the meaning of the wrong word is far off, that has no affect outside of being wrong. Examples- Doc1- You decide to build a cat. Doc2 - You decide to build a shed. That is a 2. Doc2 - I decide to build a shed. That is a 2. Doc2 I decide to make a farm. Thats a 1.",
-            },
-            {
-                "role": "user",
-                "content": f"Doc1: {original_text}. Doc2: {transcript}. Compare the . Compare doc1 and doc2, ignore differences in capitalization and punctuation. Your focus is solely on the accuracy of individual words and not meaning. If they match almost nearly, give a 3. If they have mostly matching words, give a 2. If barely any words match, give a 1. Ignore the meaning of the words. Be lenient but consistent. Respond with a single number: 1, 2, or 3.",
-            },
-        ],
-    )
-
-    response_content = completion.choices[0].message.content.strip()
-
-    # Validate the response
-    if response_content not in ["1", "2", "3"]:
-        raise ValueError("Unexpected response from the model.")
-
-    return int(response_content)
+# Test
+original_text = "You decide to build a shelter"
+transcript = "You decide to build a cat"
+word_accuracy, word_order = calculate_word_accuracy(original_text, transcript)
+print(f"Word Accuracy: {word_accuracy:.2f}%")
+print(f"Word Order Accuracy: {word_order:.2f}%")
