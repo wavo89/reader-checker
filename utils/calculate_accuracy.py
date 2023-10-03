@@ -2,14 +2,12 @@ import string
 
 
 def preprocess_text(text):
-    """Convert text to lowercase and remove punctuation."""
     text = text.lower()
     translator = str.maketrans("", "", string.punctuation)
     return text.translate(translator)
 
 
 def calculate_word_accuracy(original_words, transcript_words):
-    """Calculate word accuracy with adjusted weights."""
     total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
     matching_weight = sum(
         0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
@@ -18,7 +16,6 @@ def calculate_word_accuracy(original_words, transcript_words):
 
 
 def calculate_order_accuracy(original_words, transcript_words):
-    """Calculate word order accuracy with a penalty for added words."""
     order_matches = 0
     transcript_index = 0
     for o in original_words:
