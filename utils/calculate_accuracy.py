@@ -11,7 +11,7 @@ def calculate_accuracy(original_text, transcript):
             # },
             {
                 "role": "user",
-                "content": f"Ignore all meaning of original and transcript, we are only looking at word similarity. A '3' means 90-100 percent of the words match nearly exactly, a '2' means 40-21 percent of the words match, and a '1' means less than 20 percent of the words match. Disregard differences in capitalization and punctuation. Your focus is solely on the accuracy of individual words. Respond with a single number: 1, 2, or 3. Do not penalize if the meaning of the wrong word is far off, that has no affect outside of being wrong. Original: {original_text} | Transcript: {transcript}",
+                "content": f"Ignore all meaning of original and transcript, we are only looking at word similarity. A '3' means 90-100 percent of the words match nearly exactly, a '2' means 40-21 percent of the words match, and a '1' means less than 20 percent of the words match. Disregard differences in capitalization and punctuation. Your focus is solely on the accuracy of individual words. Respond with a single number: 1, 2, or 3. Do not penalize if the meaning of the wrong word is far off, that has no affect outside of being wrong. THE MEANING OF THE WORDS HAVE NO EFFECT ON SCORE. Original: {original_text} | Transcript: {transcript}",
             },
         ],
     )
