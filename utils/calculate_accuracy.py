@@ -17,5 +17,6 @@ def calculate_accuracy(original_text, transcript):
     )
     response_content = completion.choices[0].message.content
     # Extract the number from the response
-    accuracy = int(response_content.split()[-1])  # Assuming the last word is the number
+    accuracy = int("".join(filter(str.isdigit, response_content.split()[-1])))
+
     return accuracy
