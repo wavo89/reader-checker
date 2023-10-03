@@ -46,10 +46,3 @@ def calculate_accuracy(original_text, transcript):
         return 2
     else:
         return 3
-
-
-# Example usage:
-score = calculate_accuracy(
-    "You decide to build a shelter...", "You decide to build a cat."
-)
-print(f"Score: {score}")
