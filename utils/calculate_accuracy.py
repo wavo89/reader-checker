@@ -43,7 +43,7 @@ def calculate_accuracy(original_text, transcript):
     # Return a score based on the accuracy percentage
     if 0 <= overall_accuracy <= 0.50:
         return 1
-    elif 0.50 <= overall_accuracy <= 0.84:
+    elif 0.51 <= overall_accuracy <= 0.84:
         return 2
     else:
         return 3
