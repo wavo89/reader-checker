@@ -35,7 +35,7 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
 #accuracyResult {
   display: inline-block;
   width: calc(20% - 20px);
-  min-width: 150px;
+  min-width: 95px;
   vertical-align: top;
 }
 

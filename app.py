@@ -3,7 +3,7 @@ import openai
 import os
 import subprocess
 import pathlib
-from accuracy_checker import calculate_accuracy
+from utils.calculate_accuracy import calculate_accuracy
 import json
 
 app = Flask(__name__)
@@ -76,8 +76,11 @@ def transcribe_audio():
 def check_accuracy_route():
     original_text = request.form.get("originalText", "")
     transcript = request.form.get("transcript", "")
+    print(f"Original Text: {original_text}")
+    print(f"Transcript: {transcript}")
     accuracy = calculate_accuracy(original_text, transcript)
     truncated_accuracy = round(accuracy)
+    print(f"Calculated Accuracy: {truncated_accuracy}")
     return jsonify({"accuracy": truncated_accuracy})
 
 
