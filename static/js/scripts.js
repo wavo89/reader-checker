@@ -52,11 +52,12 @@ function sendAudioForTranscription() {
   const audioDuration =
     audioBlob.size / (audioBlob.type === "audio/wav" ? 16000 : 96000); // Approximate duration in seconds
 
-  if (audioDuration > 30) {
+  if (audioDuration > 25) {
     console.error(
-      "Audio is longer than 30 seconds. Not sending for transcription.",
+      "Audio is longer than 25 seconds. Not sending for transcription.",
     );
-    alert("Audio is too long! Please record for 30 seconds or less.");
+    alert("Audio is too long! Please record for 25 seconds or less.");
+    document.getElementById("recordButton").innerText = "Record"; // Revert the button state
     return;
   }
 
