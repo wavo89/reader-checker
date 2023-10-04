@@ -1,3 +1,11 @@
+document.addEventListener("keydown", function (event) {
+  if (event.code === "Space") {
+    // Check if the pressed key is space
+    toggleRecording();
+    event.preventDefault(); // Prevent the default action (e.g., page scrolling)
+  }
+});
+
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;

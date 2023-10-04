@@ -18,7 +18,7 @@ body {
   max-width: 480px;
 }
 
-textarea, button, #sceneText, #transcriptResult, #accuracyResult {
+textarea, button, #transcriptResult, #accuracyResult {
   margin: 10px;
   padding: 10px;
   border: none;
@@ -32,6 +32,20 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
   min-height: 40px;
 }
 
+#sceneText {
+  margin: 10px;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.75); /* Increased translucency for scene text */
+  color: #333;
+  width: 100%;
+  min-height: 40px;
+}
+
 #accuracyResult {
   display: inline-block;
   width: 130px; /* Set max-width to 120px */
@@ -40,14 +54,17 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
 }
 
 button {
-  background-color: rgba(76, 175, 80, 0.85); /* Translucent green */
+  background-color: rgba(76, 175, 80, 0.5); /* Translucent green */
   color: white;
   cursor: pointer;
-  min-height: 50px; /* Increased min-height for the green record button */
+}
+
+button#recordButton { /* Specific selector for the green record button */
+  min-height: 50px; /* Increased min-height */
 }
 
 button:hover {
-  background-color: rgba(69, 160, 73, 0.6); /* Translucent hover green */
+  background-color: rgba(69, 150, 73, 0.5); /* Translucent hover green */
 }
 
 #choiceButtons {
