@@ -40,7 +40,7 @@ def calculate_accuracy(original_text, transcript):
 
     word_accuracy = calculate_word_accuracy(original_words, transcript_words)
     order_accuracy = calculate_order_accuracy(original_words, transcript_words)
-    overall_accuracy = (word_accuracy + order_accuracy) / 2
+    overall_accuracy = round((word_accuracy + order_accuracy) / 2, 2)
 
     # Print the percentages and a summary of the numbers
     print(
