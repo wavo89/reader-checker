@@ -34,7 +34,7 @@ textarea, button, #sceneText, #transcriptResult, #accuracyResult {
 
 #accuracyResult {
   display: inline-block;
-  width: 135px; /* Set max-width to 120px */
+  width: 130px; /* Set max-width to 120px */
   vertical-align: top;
   margin-right: 5px;
 }
