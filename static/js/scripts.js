@@ -1,6 +1,7 @@
 let mediaRecorder;
 let audioChunks = [];
 let isRecording = false;
+let recordingTimer;
 
 function toggleRecording() {
   isRecording ? stopAndTranscribe() : startRecording();
@@ -11,6 +12,14 @@ function startRecording() {
     initializeMediaRecorder(stream);
     mediaRecorder.start();
     updateUIForRecording();
+
+    // Start the timer to automatically stop recording after 25 seconds
+    recordingTimer = setTimeout(() => {
+      if (isRecording) {
+        alert("Reached 25 seconds limit! Stopping recording.");
+        stopAndTranscribe();
+      }
+    }, 25000); // 25 seconds
   });
 }
 
@@ -28,6 +37,7 @@ function updateUIForRecording() {
 }
 
 function stopAndTranscribe() {
+  clearTimeout(recordingTimer); // Clear the timer
   mediaRecorder.onstop = processTranscription;
   mediaRecorder.stop();
   cleanupMediaRecorder();
