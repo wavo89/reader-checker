@@ -24,6 +24,14 @@ def serve_scene_file(filename):
     return send_from_directory("scenes", filename)
 
 
+def filter_non_english_chars(text):
+    # Allow English alphabet, Latin characters, numbers, common punctuation, and whitespace
+    allowed_chars = set(
+        "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?()[]{}-:;'\"áéíóúýÁÉÍÓÚÝàèìòùÀÈÌÒÙâêîôûÂÊÎÔÛäëïöüÿÄËÏÖÜçÇñÑß"
+    )
+    return "".join(char for char in text if char in allowed_chars)
+
+
 @app.route("/transcribe-audio", methods=["POST"])
 def transcribe_audio():
     audio_file = request.files.get("audio")
@@ -80,7 +88,9 @@ def transcribe_audio():
             original_text = request.form.get("originalText", "")
             print(f"Original Text: {original_text}")
 
-            transcribed_text = response["text"]
+            # transcribed_text = response["text"]
+            transcribed_text = filter_non_english_chars(response["text"])
+
             print("Transcription completed:", transcribed_text)
 
             accuracy = calculate_accuracy(original_text, transcribed_text)

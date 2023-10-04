@@ -93,7 +93,7 @@ function displayTranscriptionResults(data) {
   document.getElementById("recordButton").innerText = "Record";
   document.getElementById(
     "transcriptResult",
-  ).innerText = `Your Recording: ${data.transcript}`;
+  ).innerText = `Recording: ${data.transcript}`;
   console.log("Transcript from Whisper:", data.transcript);
 
   let accuracyResult = document.getElementById("accuracyResult");
