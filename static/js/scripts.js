@@ -49,6 +49,17 @@ function processTranscription() {
 
 function sendAudioForTranscription() {
   const audioBlob = new Blob(audioChunks);
+  const audioDuration =
+    audioBlob.size / (audioBlob.type === "audio/wav" ? 16000 : 96000); // Approximate duration in seconds
+
+  if (audioDuration > 30) {
+    console.error(
+      "Audio is longer than 30 seconds. Not sending for transcription.",
+    );
+    alert("Audio is too long! Please record for 30 seconds or less.");
+    return;
+  }
+
   console.log("Sending audio for transcription...");
 
   const formData = new FormData();

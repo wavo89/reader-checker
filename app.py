@@ -29,6 +29,16 @@ def transcribe_audio():
     audio_file = request.files.get("audio")
 
     if audio_file:
+        # Estimate audio duration based on file size
+        audio_size = os.path.getsize(audio_file.filename)
+        audio_duration = (
+            audio_size / 16000
+        )  # Approximate duration in seconds for WAV files
+
+        if audio_duration > 30:
+            return jsonify(
+                {"error": "Audio is longer than 30 seconds. Not processing."}
+            )
         print("Audio received. Processing...")
 
         # Directories for original and converted audio files
