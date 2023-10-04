@@ -72,7 +72,7 @@ function displayTranscriptionResults(data) {
   console.log("Transcript from Whisper:", data.transcript);
 
   let accuracyResult = document.getElementById("accuracyResult");
-  accuracyResult.innerHTML = `Accuracy: &nbsp;&nbsp;${getAccuracyEmoji(
+  accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
     data.accuracy,
   )}`;
 }
