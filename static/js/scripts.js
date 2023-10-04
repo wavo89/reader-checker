@@ -17,7 +17,7 @@ function startRecording() {
     recordingTimer = setTimeout(() => {
       if (isRecording) {
         alert("Reached 25 seconds limit! Stopping recording.");
-        stopAndTranscribe();
+        cancelRecording();
       }
     }, 25000); // 25 seconds
   });
@@ -43,6 +43,13 @@ function stopAndTranscribe() {
   cleanupMediaRecorder();
 }
 
+function cancelRecording() {
+  clearTimeout(recordingTimer);
+  cleanupMediaRecorder();
+  document.getElementById("recordButton").innerText = "Record";
+  isRecording = false;
+}
+
 function cleanupMediaRecorder() {
   let tracks = mediaRecorder.stream.getTracks();
   tracks.forEach((track) => track.stop());
@@ -59,18 +66,6 @@ function processTranscription() {
 
 function sendAudioForTranscription() {
   const audioBlob = new Blob(audioChunks);
-  const audioDuration =
-    audioBlob.size / (audioBlob.type === "audio/wav" ? 16000 : 96000); // Approximate duration in seconds
-
-  if (audioDuration > 25) {
-    console.error(
-      "Audio is longer than 25 seconds. Not sending for transcription.",
-    );
-    alert("Audio is too long! Please record for 25 seconds or less.");
-    document.getElementById("recordButton").innerText = "Record"; // Revert the button state
-    return;
-  }
-
   console.log("Sending audio for transcription...");
 
   const formData = new FormData();
