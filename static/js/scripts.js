@@ -68,15 +68,15 @@ function displayTranscriptionResults(data) {
   document.getElementById("recordButton").innerText = "Record";
   document.getElementById(
     "transcriptResult",
-  ).innerText = `Transcript: ${data.transcript}`;
+  ).innerText = `Your Recording: ${data.transcript}`;
   console.log("Transcript from Whisper:", data.transcript);
 
-  let accuracyColorBox = document.getElementById("accuracyColorBox");
-  accuracyColorBox.style.backgroundColor = getAccuracyColor(data.accuracy);
+  let accuracyResult = document.getElementById("accuracyResult");
+  accuracyResult.innerText = `Accuracy: ${getAccuracyEmoji(data.accuracy)}`;
 }
 
-function getAccuracyColor(accuracy) {
-  if (accuracy === 3) return "green";
-  if (accuracy === 2) return "yellow";
-  return "red";
+function getAccuracyEmoji(accuracy) {
+  if (accuracy === 3) return "🟢";
+  if (accuracy === 2) return "🟡";
+  return "🔴";
 }
