@@ -35,6 +35,8 @@ def calculate_order_accuracy(original_words, transcript_words):
     order_matches = 0
     transcript_index = 0
     for word in original_words:
+        if word in COMMON_WORDS:
+            continue
         if transcript_index < len(transcript_words):
             # Check for exact match or similar match
             if word == transcript_words[transcript_index] or is_similar(
@@ -43,7 +45,18 @@ def calculate_order_accuracy(original_words, transcript_words):
                 order_matches += 1
             transcript_index += 1
 
-    return order_matches / len(original_words)
+    # Penalize for extra words in the transcript
+    extra_words = len(transcript_words) - len(original_words)
+    for i in range(extra_words):
+        if not any(
+            is_similar(transcript_words[len(original_words) + i], word)
+            for word in original_words
+        ):
+            order_matches -= 0.5  # Penalize by 0.5 for each extra word
+
+    return max(0, order_matches) / len(
+        original_words
+    )  # Ensure accuracy is non-negative
 
 
 def calculate_accuracy(original_text, transcript):
