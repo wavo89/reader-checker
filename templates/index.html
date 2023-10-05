@@ -16,7 +16,7 @@
         <p id="sceneText">{{ scene.text }}</p>
         <div id="choiceButtons">
             {% for choice in scene.choices %}
-            <button onclick="window.location.href='/?scene={{ choice.link }}'">{{ choice.text }}</button>
+            <button id="choice_{{ loop.index }}" onclick="window.location.href='/?scene={{ choice.link }}'">{{ choice.text }}</button>
             {% endfor %}
         </div>
         <p id="transcriptResult">Recording: </p>
