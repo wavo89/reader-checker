@@ -65,33 +65,34 @@ def transcribe_audio():
         if not converted_filename.exists():
             return jsonify({"error": "Converted audio file not found."})
 
-        with open(converted_filename, "rb") as f:
-            response = openai.Audio.transcribe("whisper-1", f)
-            transcribed_text = response["text"]
-            print("Transcription completed:", transcribed_text)
+    with open(converted_filename, "rb") as f:
+        response = openai.Audio.transcribe("whisper-1", f)
+        transcribed_text = response["text"]
+        print("Transcription completed:", transcribed_text)
 
-            # Compare the transcribed audio with each choice
-            accuracies = {}
-            for key in request.form.keys():
-                if key.startswith("choice_"):
-                    choice_text = request.form.get(key)
-                    accuracy = calculate_accuracy(choice_text, transcribed_text)
-                    accuracies[key] = accuracy
-                    print(f"Calculated Accuracy for {key}: {accuracy}")
+        # Compare the transcribed audio with each choice
+        accuracies = {}
+        for key in request.form.keys():
+            if key.startswith("choice_"):
+                choice_text = request.form.get(key)
+                accuracy = calculate_accuracy(choice_text, transcribed_text)
+                accuracies[key] = accuracy
+                print(f"Choice Text for {key}: {choice_text}")
+                print(f"Calculated Accuracy for {key}: {accuracy}")
 
-                # Determine which choice is closer to the transcription
-                closest_choice = max(accuracies, key=accuracies.get)
-                closest_choice_accuracy = accuracies[closest_choice]
-                print(f"Closest Choice: {closest_choice}")
+        # Determine which choice is closer to the transcription
+        closest_choice = max(accuracies, key=accuracies.get)
+        closest_choice_accuracy = accuracies[closest_choice]
+        print(f"Closest Choice: {closest_choice}")
 
-                return jsonify(
-                    {
-                        "transcript": transcribed_text,
-                        "accuracies": accuracies,
-                        "closest_choice": closest_choice,
-                        "closest_choice_accuracy": closest_choice_accuracy,
-                    }
-                )
+        return jsonify(
+            {
+                "transcript": transcribed_text,
+                "accuracies": accuracies,
+                "closest_choice": closest_choice,
+                "closest_choice_accuracy": closest_choice_accuracy,
+            }
+        )
 
     return jsonify({"error": "No audio received."})
 

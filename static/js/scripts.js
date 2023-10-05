@@ -109,7 +109,7 @@ function displayTranscriptionResults(data) {
 
   let accuracyResult = document.getElementById("accuracyResult");
   accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
-    data.accuracies[data.closest_choice],
+    data.closest_choice_accuracy,
   )}`;
 }
 
