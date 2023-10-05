@@ -18,31 +18,44 @@ def preprocess_text(text):
 
 
 def calculate_word_accuracy(original_words, transcript_words):
-    total_weight = sum(len(o) for o in original_words)  # Total possible weight
+    total_words = len(original_words)
     matching_weight = 0
 
+    # Clone the lists to not modify the original lists during removals
+    original_clone = original_words.copy()
+    transcript_clone = transcript_words.copy()
+
     # Check for exact matches first
-    for o in original_words:
-        if o in transcript_words:
-            matching_weight += len(o)
-            transcript_words.remove(
+    for o in original_clone:
+        if o in transcript_clone:
+            matching_weight += 1
+            transcript_clone.remove(
                 o
             )  # Remove the matched word so it won't be used again
 
     # Check for partial matches among the unmatched words
-    for o in [word for word in original_words if word not in transcript_words]:
-        if len(o) > 3:
-            for t in transcript_words:
+    for o in [word for word in original_clone if word not in transcript_clone]:
+        if len(o) > 3:  # Only consider longer words for partial matches
+            for t in transcript_clone:
                 common_chars = sum(1 for char in o if char in t)
                 overlap_percent = common_chars / len(o)
-                if overlap_percent >= 0.5:
-                    matching_weight += len(o) * overlap_percent
-                    transcript_words.remove(
+                if (
+                    overlap_percent >= 0.7
+                ):  # Increasing the threshold for partial matches
+                    matching_weight += overlap_percent  # Add the overlap percent to the matching weight
+                    transcript_clone.remove(
                         t
                     )  # Remove the matched word so it won't be used again
                     break
 
-    return matching_weight / total_weight
+    # Introducing a penalty factor based on the number of words that don't match
+    penalty_factor = 1 - (len(original_clone) - matching_weight) / len(original_clone)
+
+    return (matching_weight / total_words) * penalty_factor
+
+
+# Testing the new function with the provided example
+calculate_word_accuracy_v9(original_words, transcript_words)
 
 
 def longest_common_subsequence(X, Y):
