@@ -18,21 +18,29 @@ def preprocess_text(text):
 
 
 def calculate_word_accuracy(original_words, transcript_words):
-    total_weight = sum(len(o) for o in original_words)
+    total_weight = sum(len(o) for o in original_words)  # Total possible weight
     matching_weight = 0
-    exact_match_bonus = 1.5
 
+    # Check for exact matches first
     for o in original_words:
         if o in transcript_words:
-            matching_weight += len(o) * (1 + exact_match_bonus)
-        else:
-            if len(o) > 3:
-                for t in transcript_words:
-                    common_chars = sum(1 for char in o if char in t)
-                    overlap_percent = common_chars / len(o)
-                    if overlap_percent >= 0.5:
-                        matching_weight += len(o) * overlap_percent
-                        break
+            matching_weight += len(o)
+            transcript_words.remove(
+                o
+            )  # Remove the matched word so it won't be used again
+
+    # Check for partial matches among the unmatched words
+    for o in [word for word in original_words if word not in transcript_words]:
+        if len(o) > 3:
+            for t in transcript_words:
+                common_chars = sum(1 for char in o if char in t)
+                overlap_percent = common_chars / len(o)
+                if overlap_percent >= 0.5:
+                    matching_weight += len(o) * overlap_percent
+                    transcript_words.remove(
+                        t
+                    )  # Remove the matched word so it won't be used again
+                    break
 
     return matching_weight / total_weight
 
