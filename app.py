@@ -29,37 +29,27 @@ def transcribe_audio():
     audio_file = request.files.get("audio")
 
     if audio_file:
-        # Check the size of the audio file (in bytes)
         audio_file_size = len(audio_file.read())
-
-        # Reset the file pointer to the beginning after reading
         audio_file.seek(0)
-
-        # Define a size limit, e.g., 5MB
         size_limit = 1 * 1024 * 1024
 
         if audio_file_size > size_limit:
             return jsonify({"error": "Audio file size exceeds 1MB. Not processing."})
 
         print("Audio received. Processing...")
-
-        # Directories for original and converted audio files
         original_audio_dir = pathlib.Path("audio-input/original")
         converted_audio_dir = pathlib.Path("audio-input/converted")
         original_audio_dir.mkdir(parents=True, exist_ok=True)
         converted_audio_dir.mkdir(parents=True, exist_ok=True)
 
-        # Determine the next available filename in the original audio directory
         existing_files = list(original_audio_dir.glob("*.wav"))
         print(f"Existing files in original directory: {existing_files}")
         next_file_num = len(existing_files) + 1
         temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
 
-        # Save the audio file
         audio_file.save(temp_filename)
         print(f"Saved new audio file as: {temp_filename}")
 
-        # Convert the audio file to WAV format using ffmpeg
         converted_filename = (
             converted_audio_dir / f"converted_audio_{next_file_num}.wav"
         )

@@ -1,8 +1,7 @@
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
-    // Check if the pressed key is space
     toggleRecording();
-    event.preventDefault(); // Prevent the default action (e.g., page scrolling)
+    event.preventDefault();
   }
 });
 
@@ -20,14 +19,12 @@ function startRecording() {
     initializeMediaRecorder(stream);
     mediaRecorder.start();
     updateUIForRecording();
-
-    // Start the timer to automatically stop recording after 25 seconds
     recordingTimer = setTimeout(() => {
       if (isRecording) {
         alert("Reached 25 seconds limit! Stopping recording.");
         cancelRecording();
       }
-    }, 25000); // 25 seconds
+    }, 25000);
   });
 }
 
@@ -45,7 +42,7 @@ function updateUIForRecording() {
 }
 
 function stopAndTranscribe() {
-  clearTimeout(recordingTimer); // Clear the timer
+  clearTimeout(recordingTimer);
   mediaRecorder.onstop = processTranscription;
   mediaRecorder.stop();
   cleanupMediaRecorder();

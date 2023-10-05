@@ -1,0 +1,316 @@
+===== ./app.py =====
+from flask import Flask, request, jsonify, render_template, send_from_directory
+import openai
+import os
+import subprocess
+import pathlib
+from utils.calculate_accuracy import calculate_accuracy
+import json
+
+app = Flask(__name__)
+openai.api_key = os.getenv("OPENAI_API_KEY")
+
+
+@app.route("/")
+def index():
+    scene_id = request.args.get("scene", "hex1")
+    with open("scenes/scenes.json", "r") as f:
+        scenes = json.load(f)
+        scene = scenes.get(scene_id, scenes["hex1"])
+    return render_template("index.html", scene=scene)
+
+
+@app.route("/scenes/<filename>")
+def serve_scene_file(filename):
+    return send_from_directory("scenes", filename)
+
+
+@app.route("/transcribe-audio", methods=["POST"])
+def transcribe_audio():
+    audio_file = request.files.get("audio")
+
+    if audio_file:
+        # Check the size of the audio file (in bytes)
+        audio_file_size = len(audio_file.read())
+
+        # Reset the file pointer to the beginning after reading
+        audio_file.seek(0)
+
+        # Define a size limit, e.g., 5MB
+        size_limit = 1 * 1024 * 1024
+
+        if audio_file_size > size_limit:
+            return jsonify({"error": "Audio file size exceeds 1MB. Not processing."})
+
+        print("Audio received. Processing...")
+
+        # Directories for original and converted audio files
+        original_audio_dir = pathlib.Path("audio-input/original")
+        converted_audio_dir = pathlib.Path("audio-input/converted")
+        original_audio_dir.mkdir(parents=True, exist_ok=True)
+        converted_audio_dir.mkdir(parents=True, exist_ok=True)
+
+        # Determine the next available filename in the original audio directory
+        existing_files = list(original_audio_dir.glob("*.wav"))
+        print(f"Existing files in original directory: {existing_files}")
+        next_file_num = len(existing_files) + 1
+        temp_filename = original_audio_dir / f"audio_{next_file_num}.wav"
+
+        # Save the audio file
+        audio_file.save(temp_filename)
+        print(f"Saved new audio file as: {temp_filename}")
+
+        # Convert the audio file to WAV format using ffmpeg
+        converted_filename = (
+            converted_audio_dir / f"converted_audio_{next_file_num}.wav"
+        )
+        result = subprocess.run(
+            ["ffmpeg", "-i", str(temp_filename), str(converted_filename)],
+            capture_output=True,
+            text=True,
+        )
+
+        if result.returncode != 0:
+            return jsonify({"error": "Audio conversion failed."})
+
+        if not converted_filename.exists():
+            return jsonify({"error": "Converted audio file not found."})
+
+        with open(converted_filename, "rb") as f:
+            response = openai.Audio.transcribe("whisper-1", f)
+            original_text = request.form.get("originalText", "")
+            print(f"Original Text: {original_text}")
+
+            transcribed_text = response["text"]
+            print("Transcription completed:", transcribed_text)
+
+            accuracy = calculate_accuracy(original_text, transcribed_text)
+            print(f"Calculated Accuracy: {accuracy}")
+
+            return jsonify({"transcript": transcribed_text, "accuracy": accuracy})
+
+    return jsonify({"error": "No audio received."})
+
+
+@app.route("/check-accuracy", methods=["POST"])
+def check_accuracy_route():
+    original_text = request.form.get("originalText", "")
+    transcript = request.form.get("transcript", "")
+    print(f"Original Text: {original_text}")
+    print(f"Transcript: {transcript}")
+    accuracy = calculate_accuracy(original_text, transcript)
+    print(f"Calculated Accuracy: {accuracy}")
+    return jsonify({"accuracy": accuracy})
+
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5001)
+
+
+===== static/js/scripts.js =====
+document.addEventListener("keydown", function (event) {
+  if (event.code === "Space") {
+    // Check if the pressed key is space
+    toggleRecording();
+    event.preventDefault(); // Prevent the default action (e.g., page scrolling)
+  }
+});
+
+let mediaRecorder;
+let audioChunks = [];
+let isRecording = false;
+let recordingTimer;
+
+function toggleRecording() {
+  isRecording ? stopAndTranscribe() : startRecording();
+}
+
+function startRecording() {
+  navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+    initializeMediaRecorder(stream);
+    mediaRecorder.start();
+    updateUIForRecording();
+
+    // Start the timer to automatically stop recording after 25 seconds
+    recordingTimer = setTimeout(() => {
+      if (isRecording) {
+        alert("Reached 25 seconds limit! Stopping recording.");
+        cancelRecording();
+      }
+    }, 25000); // 25 seconds
+  });
+}
+
+function initializeMediaRecorder(stream) {
+  audioChunks = [];
+  mediaRecorder = new MediaRecorder(stream);
+  mediaRecorder.ondataavailable = (event) => {
+    audioChunks.push(event.data);
+  };
+}
+
+function updateUIForRecording() {
+  document.getElementById("recordButton").innerText = "Stop Recording";
+  isRecording = true;
+}
+
+function stopAndTranscribe() {
+  clearTimeout(recordingTimer); // Clear the timer
+  mediaRecorder.onstop = processTranscription;
+  mediaRecorder.stop();
+  cleanupMediaRecorder();
+}
+
+function cancelRecording() {
+  clearTimeout(recordingTimer);
+  cleanupMediaRecorder();
+  document.getElementById("recordButton").innerText = "Record";
+  isRecording = false;
+}
+
+function cleanupMediaRecorder() {
+  let tracks = mediaRecorder.stream.getTracks();
+  tracks.forEach((track) => track.stop());
+}
+
+function processTranscription() {
+  document.getElementById("recordButton").innerText = "Transcribing...";
+  isRecording = false;
+
+  sendAudioForTranscription().then((data) => {
+    displayTranscriptionResults(data);
+  });
+}
+
+function sendAudioForTranscription() {
+  const audioBlob = new Blob(audioChunks);
+  console.log("Sending audio for transcription...");
+
+  const formData = new FormData();
+  formData.append("audio", audioBlob);
+  formData.append(
+    "originalText",
+    document.getElementById("sceneText").innerText,
+  );
+
+  return fetch("/transcribe-audio", {
+    method: "POST",
+    body: formData,
+  }).then((response) => response.json());
+}
+
+function displayTranscriptionResults(data) {
+  document.getElementById("recordButton").innerText = "Record";
+  document.getElementById(
+    "transcriptResult",
+  ).innerText = `Recording: ${data.transcript}`;
+  console.log("Transcript from Whisper:", data.transcript);
+
+  let accuracyResult = document.getElementById("accuracyResult");
+  accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
+    data.accuracy,
+  )}`;
+}
+
+function getAccuracyEmoji(accuracy) {
+  if (accuracy === 3) return "🟢";
+  if (accuracy === 2) return "🟡";
+  return "🔴";
+}
+
+
+===== templates/index.html =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voice Accuracy Checker</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <style>
+        body {
+            background-image: url('static/images/{{ scene.image }}');
+        }
+    </style>
+</head>
+<body>
+    <div id="contentWrapper">
+        <p id="sceneText">{{ scene.text }}</p>
+        <div id="choiceButtons">
+            {% for choice in scene.choices %}
+            <button onclick="window.location.href='/?scene={{ choice.link }}'">{{ choice.text }}</button>
+            {% endfor %}
+        </div>
+        <p id="transcriptResult">Recording: </p>
+        <p id="accuracyResult">Accuracy:&nbsp;&nbsp;----</p>
+        <button id="recordButton" onclick="toggleRecording()">Record</button>
+
+    </div>
+    <script src="static/js/scripts.js"></script>
+</body>
+</html>
+
+
+===== utils/calculate_accuracy.py =====
+import string
+
+
+def preprocess_text(text):
+    text = text.lower()
+    translator = str.maketrans("", "", string.punctuation)
+    return text.translate(translator)
+
+
+def calculate_word_accuracy(original_words, transcript_words):
+    total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
+    matching_weight = sum(
+        0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
+    )
+    return matching_weight / total_weight
+
+
+def calculate_order_accuracy(original_words, transcript_words):
+    order_matches = 0
+    transcript_index = 0
+    for o in original_words:
+        if (
+            transcript_index < len(transcript_words)
+            and o == transcript_words[transcript_index]
+        ):
+            order_matches += 1
+            transcript_index += 1
+        elif o in transcript_words[transcript_index:]:
+            transcript_index = transcript_words.index(o, transcript_index) + 1
+    added_words_penalty = len(transcript_words) - len(original_words)
+    return order_matches / (len(original_words) + max(0, added_words_penalty))
+
+
+def calculate_accuracy(original_text, transcript):
+    original_text = preprocess_text(original_text)
+    transcript = preprocess_text(transcript)
+
+    original_words = original_text.split()
+    transcript_words = transcript.split()
+
+    word_accuracy = calculate_word_accuracy(original_words, transcript_words)
+    order_accuracy = calculate_order_accuracy(original_words, transcript_words)
+    overall_accuracy = round((word_accuracy + order_accuracy) / 2, 2)
+
+    # Print the percentages and a summary of the numbers
+    print(
+        f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {word_accuracy*len(original_words):.2f}/{len(original_words)})"
+    )
+    print(
+        f"Order Accuracy: {order_accuracy*100:.2f}% (Correct Order Matches: {order_accuracy*len(original_words):.2f}/{len(original_words)})"
+    )
+    print(f"Overall Accuracy: {overall_accuracy*100:.2f}%")
+
+    # Return a score based on the accuracy percentage
+    if 0 <= overall_accuracy <= 0.40:
+        return 1
+    elif 0.41 <= overall_accuracy <= 0.84:
+        return 2
+    else:
+        return 3
+
+
