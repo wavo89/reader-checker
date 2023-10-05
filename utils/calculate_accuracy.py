@@ -55,7 +55,7 @@ def calculate_word_accuracy(original_words, transcript_words):
 
 
 # Testing the new function with the provided example
-calculate_word_accuracy_v9(original_words, transcript_words)
+calculate_word_accuracy(original_words, transcript_words)
 
 
 def longest_common_subsequence(X, Y):
