@@ -95,9 +95,21 @@ function displayTranscriptionResults(data) {
   ).innerText = `Recording: ${data.transcript}`;
   console.log("Transcript from Whisper:", data.transcript);
 
+  // Reset borders for all choices
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    button.style.border = "none";
+  });
+
+  // Highlight the closest choice with a neon green border
+  const closestChoiceButton = document.getElementById(data.closest_choice);
+  if (closestChoiceButton) {
+    closestChoiceButton.style.border = "3px solid neon";
+  }
+
   let accuracyResult = document.getElementById("accuracyResult");
   accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
-    data.accuracy,
+    data.accuracies[data.closest_choice],
   )}`;
 }
 

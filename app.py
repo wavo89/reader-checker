@@ -79,17 +79,19 @@ def transcribe_audio():
                     accuracies[key] = accuracy
                     print(f"Calculated Accuracy for {key}: {accuracy}")
 
-            # Determine which choice is closer to the transcription
-            closest_choice = max(accuracies, key=accuracies.get)
-            print(f"Closest Choice: {closest_choice}")
+                # Determine which choice is closer to the transcription
+                closest_choice = max(accuracies, key=accuracies.get)
+                closest_choice_accuracy = accuracies[closest_choice]
+                print(f"Closest Choice: {closest_choice}")
 
-            return jsonify(
-                {
-                    "transcript": transcribed_text,
-                    "accuracies": accuracies,
-                    "closest_choice": closest_choice,
-                }
-            )
+                return jsonify(
+                    {
+                        "transcript": transcribed_text,
+                        "accuracies": accuracies,
+                        "closest_choice": closest_choice,
+                        "closest_choice_accuracy": closest_choice_accuracy,
+                    }
+                )
 
     return jsonify({"error": "No audio received."})
 
