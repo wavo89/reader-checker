@@ -86,9 +86,12 @@ def calculate_accuracy(original_text, transcript):
         f"Order Accuracy: {order_accuracy*100:.2f}% (Correct Order Matches: {order_accuracy*len(original_words):.2f}/{len(original_words)})"
     )
     print(f"Overall Accuracy: {overall_accuracy*100:.2f}%")
-    if 0 <= overall_accuracy <= 0.50:
+    
+    lower_threshold = 0.40
+    upper_threshold = 0.85
+    if 0 <= overall_accuracy <= lower_threshold:
         return 1
-    elif 0.51 <= overall_accuracy <= 0.85:
+    elif lower_threshold <= overall_accuracy <= upper_threshold:
         return 2
     else:
         return 3
