@@ -102,9 +102,10 @@ function displayTranscriptionResults(data) {
   });
 
   // Highlight the closest choice with a neon green border
+  console.log(data.closest_choice);
   const closestChoiceButton = document.getElementById(data.closest_choice);
   if (closestChoiceButton) {
-    closestChoiceButton.style.border = "3px solid neon";
+    closestChoiceButton.style.border = "3px solid #39FF14"; // Neon
   }
 
   let accuracyResult = document.getElementById("accuracyResult");
