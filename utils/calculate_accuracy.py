@@ -1,10 +1,10 @@
+# Consolidated and Updated Code
+
 import string
-import re  # Import the regular expressions module
+import re
 
 
 def preprocess_text(text):
-    # Remove non-Latin characters and retain punctuation
-    # This regex pattern includes Latin-based characters, including accented characters, whitespace, and punctuation.
     text = re.sub(
         r"[^a-zA-Z\s"
         + string.punctuation
@@ -12,28 +12,27 @@ def preprocess_text(text):
         "",
         text,
     )
-
     text = text.lower()
     translator = str.maketrans("", "", string.punctuation)
     return text.translate(translator)
 
 
 def calculate_word_accuracy(original_words, transcript_words):
-    total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
+    total_weight = sum(len(o) for o in original_words)
     matching_weight = 0
+    exact_match_bonus = 1.5
 
     for o in original_words:
         if o in transcript_words:
-            matching_weight += 0.25 if len(o) <= 3 else 1
+            matching_weight += len(o) * (1 + exact_match_bonus)
         else:
-            # Check for partial matches
-            for t in transcript_words:
-                common_chars = sum(1 for char in o if char in t)
-                if common_chars / len(o) >= 0.25:
-                    matching_weight += (
-                        0.25 if len(o) <= 3 else 1
-                    ) * 0.75  # Penalize by 1/4 of its weight
-                    break
+            if len(o) > 3:
+                for t in transcript_words:
+                    common_chars = sum(1 for char in o if char in t)
+                    overlap_percent = common_chars / len(o)
+                    if overlap_percent >= 0.5:
+                        matching_weight += len(o) * overlap_percent
+                        break
 
     return matching_weight / total_weight
 
@@ -67,9 +66,8 @@ def calculate_accuracy(original_text, transcript):
 
     word_accuracy = calculate_word_accuracy(original_words, transcript_words)
     order_accuracy = calculate_order_accuracy(original_words, transcript_words)
-    overall_accuracy = round(
-        (0.6 * word_accuracy + 0.4 * order_accuracy), 2
-    )  # Adjusted weights
+
+    overall_accuracy = round((0.8 * word_accuracy + 0.2 * order_accuracy), 2)
 
     print(
         f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {word_accuracy*len(original_words):.2f}/{len(original_words)})"
@@ -79,9 +77,9 @@ def calculate_accuracy(original_text, transcript):
     )
     print(f"Overall Accuracy: {overall_accuracy*100:.2f}%")
 
-    if 0 <= overall_accuracy <= 0.40:
+    if 0 <= overall_accuracy <= 0.50:
         return 1
-    elif 0.41 <= overall_accuracy <= 0.84:
+    elif 0.51 <= overall_accuracy <= 0.85:
         return 2
     else:
         return 3
