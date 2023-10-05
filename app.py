@@ -38,7 +38,7 @@ def transcribe_audio():
     if audio_file:
         audio_file_size = len(audio_file.read())
         audio_file.seek(0)
-        size_limit = 1 * 1024 * 1024
+        size_limit = 20 * 1024 * 1024
 
         if audio_file_size > size_limit:
             return jsonify({"error": "Audio file size exceeds 1MB. Not processing."})
