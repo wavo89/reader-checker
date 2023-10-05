@@ -3,7 +3,7 @@
     "text": "We seem to have drifted onto an island.",
     "image": "bg1.png",
     "choices": [
-      {"text": "Explore the island", "link": "hex2"},
+      {"text": "This is so cool, let's explore the island.", "link": "hex2"},
       {"text": "Build a shelter", "link": "hex3"}
     ]
   },
