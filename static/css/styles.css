@@ -74,10 +74,14 @@ button:hover {
   width: 100%;
 }
 
+
 #choiceButtons button {
-  width: 100%;
-  margin-bottom: 10px;
+  width: calc(100% - 40px);  /* Adjusts the width considering the left margin */
+  margin-left: 50px;  /* Adds space to the left of the button */
+  text-align: left;  /* Aligns the text to the left */
   background-color: rgba(0, 123, 255, 0.85); /* Translucent blue */
+  margin-bottom: 10px;
+  box-sizing: border-box;  /* Ensures padding and border are included in the total width */
 }
 
 #choiceButtons button:hover {

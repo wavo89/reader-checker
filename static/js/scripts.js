@@ -2,19 +2,17 @@ document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
     const recordButton = document.getElementById("recordButton");
     if (recordButton.innerText === "Continue") {
-      const closestChoiceButton = document.querySelector(
-        "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
-      );
-      if (closestChoiceButton) {
-        window.location.href = closestChoiceButton
-          .getAttribute("onclick")
-          .replace("window.location.href='", "")
-          .replace("'", "");
-      }
+      navigateToHighlightedChoice();
     } else {
       toggleRecording();
     }
     event.preventDefault();
+  }
+});
+
+document.getElementById("recordButton").addEventListener("click", function () {
+  if (this.innerText === "Continue") {
+    navigateToHighlightedChoice();
   }
 });
 
@@ -39,6 +37,18 @@ function startRecording() {
       }
     }, 25000);
   });
+}
+
+function navigateToHighlightedChoice() {
+  const closestChoiceButton = document.querySelector(
+    "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
+  );
+  if (closestChoiceButton) {
+    window.location.href = closestChoiceButton
+      .getAttribute("onclick")
+      .replace("window.location.href='", "")
+      .replace("'", "");
+  }
 }
 
 function initializeMediaRecorder(stream) {
@@ -138,7 +148,7 @@ function displayTranscriptionResults(data) {
     recordButton.innerText = "Continue";
   } else {
     // If accuracy is red
-    recordButton.innerText = "Record Again";
+    recordButton.innerText = "Record";
   }
 }
 
