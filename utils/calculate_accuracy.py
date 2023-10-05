@@ -1,7 +1,18 @@
 import string
+import re  # Import the regular expressions module
 
 
 def preprocess_text(text):
+    # Remove non-Latin characters and retain punctuation
+    # This regex pattern includes Latin-based characters, including accented characters, whitespace, and punctuation.
+    text = re.sub(
+        r"[^a-zA-Z\s"
+        + string.punctuation
+        + "áéíóúÁÉÍÓÚüÜñÑçÇöÖäÄëËïÏâêîôûÂÊÎÔÛàèìòùÀÈÌÒÙ]",
+        "",
+        text,
+    )
+
     text = text.lower()
     translator = str.maketrans("", "", string.punctuation)
     return text.translate(translator)

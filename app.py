@@ -70,6 +70,8 @@ def transcribe_audio():
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
 
+            print("Transcription completed:", transcribed_text)
+
             # Compare the transcribed audio with each choice
             accuracies = {}
             for key in request.form.keys():
@@ -77,6 +79,9 @@ def transcribe_audio():
                     choice_text = request.form.get(key)
                     accuracy = calculate_accuracy(choice_text, transcribed_text)
                     accuracies[key] = accuracy
+                    print(
+                        f"Comparing with {choice_text}"
+                    )  # <-- This line prints the choice text
                     print(f"Calculated Accuracy for {key}: {accuracy}")
 
             # Determine which choice is closer to the transcription
