@@ -51,10 +51,6 @@ def calculate_word_accuracy(original_words, transcript_words):
     return (matching_weight / total_words) * penalty_factor
 
 
-# Testing the new function with the provided example
-calculate_word_accuracy_v12(original_words, transcript_words)
-
-
 def longest_common_subsequence(X, Y):
     m = len(X)
     n = len(Y)
