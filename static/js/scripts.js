@@ -127,14 +127,15 @@ function displayTranscriptionResults(data) {
 
   // Update the Record button's text based on the accuracy
   const recordButton = document.getElementById("recordButton");
-  if (data.closest_choice_accuracy === 3) {
-    // If accuracy is green
+  if (
+    data.closest_choice_accuracy === 3 ||
+    data.closest_choice_accuracy === 2
+  ) {
+    // If accuracy is green or yellow
     recordButton.innerText = "Continue";
-  } else if (data.closest_choice_accuracy === 1) {
+  } else {
     // If accuracy is red
     recordButton.innerText = "Record Again";
-  } else {
-    recordButton.innerText = "Record";
   }
 }
 

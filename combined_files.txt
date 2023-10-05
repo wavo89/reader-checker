@@ -115,7 +115,20 @@ if __name__ == "__main__":
 ===== static/js/scripts.js =====
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
-    toggleRecording();
+    const recordButton = document.getElementById("recordButton");
+    if (recordButton.innerText === "Continue") {
+      const closestChoiceButton = document.querySelector(
+        "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
+      );
+      if (closestChoiceButton) {
+        window.location.href = closestChoiceButton
+          .getAttribute("onclick")
+          .replace("window.location.href='", "")
+          .replace("'", "");
+      }
+    } else {
+      toggleRecording();
+    }
     event.preventDefault();
   }
 });
@@ -204,7 +217,6 @@ function sendAudioForTranscription() {
 }
 
 function displayTranscriptionResults(data) {
-  document.getElementById("recordButton").innerText = "Record";
   document.getElementById(
     "transcriptResult",
   ).innerText = `Recording: ${data.transcript}`;
@@ -227,6 +239,18 @@ function displayTranscriptionResults(data) {
   accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
     data.closest_choice_accuracy,
   )}`;
+
+  // Update the Record button's text based on the accuracy
+  const recordButton = document.getElementById("recordButton");
+  if (data.closest_choice_accuracy === 3) {
+    // If accuracy is green
+    recordButton.innerText = "Continue";
+  } else if (data.closest_choice_accuracy === 1) {
+    // If accuracy is red
+    recordButton.innerText = "Record Again";
+  } else {
+    recordButton.innerText = "Record";
+  }
 }
 
 function getAccuracyEmoji(accuracy) {
@@ -279,9 +303,21 @@ def preprocess_text(text):
 
 def calculate_word_accuracy(original_words, transcript_words):
     total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
-    matching_weight = sum(
-        0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
-    )
+    matching_weight = 0
+
+    for o in original_words:
+        if o in transcript_words:
+            matching_weight += 0.25 if len(o) <= 3 else 1
+        else:
+            # Check for partial matches
+            for t in transcript_words:
+                common_chars = sum(1 for char in o if char in t)
+                if common_chars / len(o) >= 0.25:
+                    matching_weight += (
+                        0.25 if len(o) <= 3 else 1
+                    ) * 0.75  # Penalize by 1/4 of its weight
+                    break
+
     return matching_weight / total_weight
 
 
