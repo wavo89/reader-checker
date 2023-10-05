@@ -38,20 +38,24 @@ def calculate_word_accuracy(original_words, transcript_words):
     return matching_weight / total_weight
 
 
+def longest_common_subsequence(X, Y):
+    m = len(X)
+    n = len(Y)
+    L = [[0] * (n + 1) for i in range(m + 1)]
+    for i in range(m + 1):
+        for j in range(n + 1):
+            if i == 0 or j == 0:
+                L[i][j] = 0
+            elif X[i - 1] == Y[j - 1]:
+                L[i][j] = L[i - 1][j - 1] + 1
+            else:
+                L[i][j] = max(L[i - 1][j], L[i][j - 1])
+    return L[m][n]
+
+
 def calculate_order_accuracy(original_words, transcript_words):
-    order_matches = 0
-    transcript_index = 0
-    for o in original_words:
-        if (
-            transcript_index < len(transcript_words)
-            and o == transcript_words[transcript_index]
-        ):
-            order_matches += 1
-            transcript_index += 1
-        elif o in transcript_words[transcript_index:]:
-            transcript_index = transcript_words.index(o, transcript_index) + 1
-    added_words_penalty = len(transcript_words) - len(original_words)
-    return order_matches / (len(original_words) + max(0, added_words_penalty))
+    lcs = longest_common_subsequence(original_words, transcript_words)
+    return lcs / len(original_words)
 
 
 def calculate_accuracy(original_text, transcript):
@@ -63,7 +67,9 @@ def calculate_accuracy(original_text, transcript):
 
     word_accuracy = calculate_word_accuracy(original_words, transcript_words)
     order_accuracy = calculate_order_accuracy(original_words, transcript_words)
-    overall_accuracy = round((word_accuracy + order_accuracy) / 2, 2)
+    overall_accuracy = round(
+        (0.6 * word_accuracy + 0.4 * order_accuracy), 2
+    )  # Adjusted weights
 
     print(
         f"Word Accuracy: {word_accuracy*100:.2f}% (Weighted Matching Words: {word_accuracy*len(original_words):.2f}/{len(original_words)})"
