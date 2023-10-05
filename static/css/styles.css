@@ -76,8 +76,8 @@ button:hover {
 
 
 #choiceButtons button {
-  width: calc(100% - 40px);  /* Adjusts the width considering the left margin */
-  margin-left: 50px;  /* Adds space to the left of the button */
+  /* width: calc(100% - 42px); */
+  /* margin-left: 50px;  */
   text-align: left;  /* Aligns the text to the left */
   background-color: rgba(0, 123, 255, 0.85); /* Translucent blue */
   margin-bottom: 10px;
