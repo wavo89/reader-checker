@@ -113,11 +113,14 @@ function displayTranscriptionResults(data) {
     button.style.border = "none";
   });
 
-  // Highlight the closest choice with a neon green border
+  // Highlight the closest choice with a neon green border only if accuracy is not red
   console.log(data.closest_choice_id);
-  const closestChoiceButton = document.getElementById(data.closest_choice_id);
-  if (closestChoiceButton) {
-    closestChoiceButton.style.border = "3px solid #39FF14"; // Neon
+  if (data.closest_choice_accuracy !== 1) {
+    // Check if accuracy is not red
+    const closestChoiceButton = document.getElementById(data.closest_choice_id);
+    if (closestChoiceButton) {
+      closestChoiceButton.style.border = "3px solid #39FF14"; // Neon
+    }
   }
 
   let accuracyResult = document.getElementById("accuracyResult");
