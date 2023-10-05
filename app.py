@@ -36,13 +36,12 @@ def transcribe_audio():
     audio_file = request.files.get("audio")
 
     if audio_file:
-        # Commented out the file size check
-        # audio_file_size = len(audio_file.read())
-        # audio_file.seek(0)
-        # size_limit = 1 * 1024 * 1024
+        audio_file_size = len(audio_file.read())
+        audio_file.seek(0)
+        size_limit = 1 * 1024 * 1024
 
-        # if audio_file_size > size_limit:
-        #     return jsonify({"error": "Audio file size exceeds 1MB. Not processing."})
+        if audio_file_size > size_limit:
+            return jsonify({"error": "Audio file size exceeds 1MB. Not processing."})
 
         print("Audio received. Processing...")
         original_audio_dir = pathlib.Path("audio-input/original")
