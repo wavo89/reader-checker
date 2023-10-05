@@ -9,9 +9,21 @@ def preprocess_text(text):
 
 def calculate_word_accuracy(original_words, transcript_words):
     total_weight = sum(0.25 if len(o) <= 3 else 1 for o in original_words)
-    matching_weight = sum(
-        0.25 if len(o) <= 3 else 1 for o in original_words if o in transcript_words
-    )
+    matching_weight = 0
+
+    for o in original_words:
+        if o in transcript_words:
+            matching_weight += 0.25 if len(o) <= 3 else 1
+        else:
+            # Check for partial matches
+            for t in transcript_words:
+                common_chars = sum(1 for char in o if char in t)
+                if common_chars / len(o) >= 0.25:
+                    matching_weight += (
+                        0.25 if len(o) <= 3 else 1
+                    ) * 0.75  # Penalize by 1/4 of its weight
+                    break
+
     return matching_weight / total_weight
 
 
