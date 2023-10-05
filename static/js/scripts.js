@@ -1,6 +1,19 @@
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
-    toggleRecording();
+    const recordButton = document.getElementById("recordButton");
+    if (recordButton.innerText === "Continue") {
+      const closestChoiceButton = document.querySelector(
+        "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
+      );
+      if (closestChoiceButton) {
+        window.location.href = closestChoiceButton
+          .getAttribute("onclick")
+          .replace("window.location.href='", "")
+          .replace("'", "");
+      }
+    } else {
+      toggleRecording();
+    }
     event.preventDefault();
   }
 });
@@ -89,7 +102,6 @@ function sendAudioForTranscription() {
 }
 
 function displayTranscriptionResults(data) {
-  document.getElementById("recordButton").innerText = "Record";
   document.getElementById(
     "transcriptResult",
   ).innerText = `Recording: ${data.transcript}`;
@@ -112,6 +124,18 @@ function displayTranscriptionResults(data) {
   accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
     data.closest_choice_accuracy,
   )}`;
+
+  // Update the Record button's text based on the accuracy
+  const recordButton = document.getElementById("recordButton");
+  if (data.closest_choice_accuracy === 3) {
+    // If accuracy is green
+    recordButton.innerText = "Continue";
+  } else if (data.closest_choice_accuracy === 1) {
+    // If accuracy is red
+    recordButton.innerText = "Record Again";
+  } else {
+    recordButton.innerText = "Record";
+  }
 }
 
 function getAccuracyEmoji(accuracy) {
