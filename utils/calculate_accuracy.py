@@ -57,24 +57,26 @@ def calculate_word_accuracy(original_words, transcript_words):
 
 
 def calculate_order_accuracy(original_words, transcript_words):
-    order_matches = 0
-    transcript_index = 0
-    for o in original_words:
-        if (
-            transcript_index < len(transcript_words)
-            and o == transcript_words[transcript_index]
-        ):
-            order_matches += 1
-            transcript_index += 1
-        elif o in transcript_words[transcript_index:]:
-            transcript_index = transcript_words.index(o, transcript_index) + 1
-    added_words_penalty = len(transcript_words) - len(original_words)
-    return order_matches / (len(original_words) + max(0, added_words_penalty))
+    # Calculate the Longest Common Subsequence (LCS) length
+    m, n = len(original_words), len(transcript_words)
+    dp = [[0] * (n + 1) for _ in range(m + 1)]
+
+    for i in range(1, m + 1):
+        for j in range(1, n + 1):
+            if original_words[i - 1] == transcript_words[j - 1]:
+                dp[i][j] = dp[i - 1][j - 1] + 1
+            else:
+                dp[i][j] = max(dp[i - 1][j], dp[i][j - 1])
+
+    lcs_length = dp[m][n]
+    return lcs_length / len(original_words)
 
 
 def calculate_accuracy(original_text, transcript):
     original_text = preprocess_text(original_text)
     transcript = preprocess_text(transcript)
+
+    print(f"Original Text: {original_text}")
 
     original_words = original_text.split()
     transcript_words = transcript.split()
