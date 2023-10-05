@@ -75,10 +75,12 @@ function sendAudioForTranscription() {
 
   const formData = new FormData();
   formData.append("audio", audioBlob);
-  formData.append(
-    "originalText",
-    document.getElementById("sceneText").innerText,
-  );
+
+  // Extracting choices from the rendered scene
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button, index) => {
+    formData.append(`choice_${index + 1}`, button.innerText);
+  });
 
   return fetch("/transcribe-audio", {
     method: "POST",
