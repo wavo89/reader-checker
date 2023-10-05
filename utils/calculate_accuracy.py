@@ -25,20 +25,23 @@ def calculate_word_accuracy(original_words, transcript_words):
     return matching_weight / total_weight
 
 
+def is_similar(word1, word2):
+    """Check if two words are at least 25% similar."""
+    common_chars = sum(1 for char in word1 if char in word2)
+    return common_chars / len(word1) >= 0.25
+
+
 def calculate_order_accuracy(original_words, transcript_words):
     order_matches = 0
-    for idx, word in enumerate(original_words):
-        if idx < len(transcript_words) and word == transcript_words[idx]:
-            order_matches += 1
-        else:
-            # Check for the word in a sliding window in the transcript
-            window_size = 3
-            for i in range(
-                max(0, idx - window_size), min(len(transcript_words), idx + window_size)
+    transcript_index = 0
+    for word in original_words:
+        if transcript_index < len(transcript_words):
+            # Check for exact match or similar match
+            if word == transcript_words[transcript_index] or is_similar(
+                word, transcript_words[transcript_index]
             ):
-                if word == transcript_words[i]:
-                    order_matches += 0.5  # Give half credit for out-of-order matches
-                    break
+                order_matches += 1
+            transcript_index += 1
 
     return order_matches / len(original_words)
 
