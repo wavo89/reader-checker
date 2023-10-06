@@ -16,13 +16,39 @@ def preprocess_text(text):
 
 def calculate_word_accuracy(original_words, transcript_words):
     total_words = len(original_words)
-    matching_weight = sum(1 for word in original_words if word in transcript_words)
+    matching_weight = 0
 
-    # Adjusting the penalty factor using a simpler approach
+    # Clone the lists to not modify the original lists during removals
+    original_clone = original_words.copy()
+    transcript_clone = transcript_words.copy()
+
+    # Check for exact matches first
+    for o in original_clone:
+        if o in transcript_clone:
+            matching_weight += 1
+            transcript_clone.remove(o)
+
+    # Check for partial matches among the unmatched words
+    for o in [word for word in original_clone if word not in transcript_clone]:
+        if len(o) > 3:  # Only consider longer words for partial matches
+            for t in transcript_clone:
+                common_chars = sum(1 for char in o if char in t)
+                overlap_percent = common_chars / len(o)
+                if overlap_percent >= 0.7:  # Threshold for partial matches
+                    matching_weight += overlap_percent
+                    transcript_clone.remove(t)
+                    break
+
+    # Further adjusting the penalty factor using a more aggressive approach
     missing_words = total_words - matching_weight
-    penalty_factor = 1 - (0.1 * missing_words / total_words)
+    base_penalty = 0.1
+    dynamic_penalty = base_penalty * (10 / (total_words + 1))
+    penalty_factor = 1 - (base_penalty + dynamic_penalty) * missing_words
 
-    return max(0, min(1, (matching_weight / total_words) * penalty_factor))
+    # Ensure word accuracy doesn't go below 0%
+    return max(
+        0, min(1, (matching_weight / total_words) * penalty_factor)
+    )  # Ensure it doesn't exceed 100%
 
 
 def longest_common_subsequence(X, Y):
