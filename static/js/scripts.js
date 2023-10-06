@@ -1,3 +1,27 @@
+// Create a new Image object to load the high-quality image.
+const highQualityImage = new Image();
+
+// This will log when the image starts loading.
+console.log("Starting to load the high-quality image...");
+
+// Add an onload handler for this image.
+highQualityImage.onload = function () {
+  console.log("High-quality image has finished loading!");
+  // Once the high-quality image is fully loaded, set it as the background.
+  document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
+};
+
+// Add an onerror handler in case the image fails to load.
+highQualityImage.onerror = function () {
+  console.error("Error loading the high-quality image.");
+};
+
+// Start by loading the high-quality image immediately when the script runs.
+const sceneIdElement = document.getElementById("sceneId");
+const sceneId = sceneIdElement.getAttribute("data-scene-id");
+highQualityImage.src =
+  "https://storyscenes.blob.core.windows.net/image1/" + sceneId + ".jpg";
+
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
     const recordButton = document.getElementById("recordButton");

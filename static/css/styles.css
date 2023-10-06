@@ -62,6 +62,16 @@ button {
   cursor: pointer;
 }
 
+/* @keyframes blurTransition {
+  0% {
+    filter: blur(100%);
+  }
+  100% {
+    filter: blur(20%);
+  }
+} */
+
+
 button#recordButton { /* Specific selector for the green record button */
   min-height: 50px; /* Increased min-height */
 }

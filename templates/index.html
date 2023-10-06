@@ -7,11 +7,14 @@
     <link rel="stylesheet" href="static/css/styles.css">
     <style>
         body {
-            background-image: url('https://storyscenes.blob.core.windows.net/image1/{{ scene_id }}.jpg');
+            background-image: url('https://storyscenes.blob.core.windows.net/extra-converted/{{ scene_id }}.jpg');
         }
     </style>
-            </head>
+</head>
 <body>
+    <!-- Hidden div to store scene_id for JavaScript to access -->
+    <div id="sceneId" data-scene-id="{{ scene_id }}" style="display: none;"></div>
+
     <div id="contentWrapper">
         <p id="sceneText">{{ scene.text }}</p>
         <div id="choiceButtons">
