@@ -1,8 +1,11 @@
 body {
   font-family: 'Arial', sans-serif;
+  /* background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center; */
   background-size: cover;
   background-repeat: no-repeat;
-  background-position: center;
+  background-position: center center;
   height: 100vh;
   display: flex;
   flex-direction: column;
