@@ -16,7 +16,7 @@ def index():
     with open("scenes/scenes.json", "r") as f:
         scenes = json.load(f)
         scene = scenes.get(scene_id, scenes["hex1"])
-    return render_template("index.html", scene=scene)
+    return render_template("index.html", scene=scene, scene_id=scene_id)
 
 
 @app.route("/scenes/<filename>")
