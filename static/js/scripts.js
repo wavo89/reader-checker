@@ -20,7 +20,9 @@ highQualityImage.onerror = function () {
 const sceneIdElement = document.getElementById("sceneId");
 const sceneId = sceneIdElement.getAttribute("data-scene-id");
 highQualityImage.src =
-  "https://storyscenes.blob.core.windows.net/image1/" + sceneId + ".jpg";
+  "https://storyscenes.blob.core.windows.net/background-normal/" +
+  sceneId +
+  ".jpg";
 
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
