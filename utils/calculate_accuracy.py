@@ -3,6 +3,7 @@ import re
 
 
 def preprocess_text(text):
+    # Remove characters not in the specified range
     text = re.sub(
         r"[^a-zA-Z\s"
         + string.punctuation
@@ -10,16 +11,14 @@ def preprocess_text(text):
         "",
         text,
     )
-    text = text.lower()
-    translator = str.maketrans("", "", string.punctuation)
-    return text.translate(translator)
+    return text
 
 
 def calculate_word_accuracy(original_words, transcript_words):
     total_words = len(original_words)
     matching_weight = 0
 
-    # Clone the lists to avoid modifying the original lists during removals
+    # Clone the lists to not modify the original lists during removals
     original_clone = original_words.copy()
     transcript_clone = transcript_words.copy()
 
@@ -30,24 +29,15 @@ def calculate_word_accuracy(original_words, transcript_words):
             transcript_clone.remove(o)
 
     # Check for partial matches among the unmatched words
-    unmatched_original = [
-        word for word in original_clone if word not in transcript_clone
-    ]
-    for o in unmatched_original:
+    for o in [word for word in original_clone if word not in transcript_clone]:
         if len(o) > 3:  # Only consider longer words for partial matches
-            best_overlap_percent = 0
-            best_transcript_word = None
             for t in transcript_clone:
                 common_chars = sum(1 for char in o if char in t)
                 overlap_percent = common_chars / len(o)
-                if overlap_percent > best_overlap_percent and overlap_percent >= 0.7:
-                    best_overlap_percent = overlap_percent
-                    best_transcript_word = t
-
-            # If a partial match is found, adjust the matching weight
-            if best_transcript_word:
-                matching_weight += best_overlap_percent
-                transcript_clone.remove(best_transcript_word)
+                if overlap_percent >= 0.7:  # Threshold for partial matches
+                    matching_weight += overlap_percent
+                    transcript_clone.remove(t)
+                    break
 
     # Further adjusting the penalty factor using a more aggressive approach
     missing_words = total_words - matching_weight
@@ -56,7 +46,9 @@ def calculate_word_accuracy(original_words, transcript_words):
     penalty_factor = 1 - (base_penalty + dynamic_penalty) * missing_words
 
     # Ensure word accuracy doesn't go below 0%
-    return max(0, (matching_weight / total_words) * penalty_factor)
+    return max(
+        0, min(1, (matching_weight / total_words) * penalty_factor)
+    )  # Ensure it doesn't exceed 100%
 
 
 def longest_common_subsequence(X, Y):
@@ -79,9 +71,17 @@ def calculate_order_accuracy(original_words, transcript_words):
     return lcs / len(original_words)
 
 
+def preprocess_for_comparison(text):
+    """Removes punctuation and converts text to lowercase."""
+    text = text.lower()
+    # Remove punctuation
+    text = "".join(ch for ch in text if ch not in set(string.punctuation))
+    return text
+
+
 def calculate_accuracy(original_text, transcript):
-    original_text = preprocess_text(original_text)
-    transcript = preprocess_text(transcript)
+    original_text = preprocess_for_comparison(original_text)
+    transcript = preprocess_for_comparison(transcript)
     original_words = original_text.split()
     transcript_words = transcript.split()
     word_accuracy = calculate_word_accuracy(original_words, transcript_words)

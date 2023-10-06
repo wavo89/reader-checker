@@ -3,7 +3,7 @@ import openai
 import os
 import subprocess
 import pathlib
-from utils.calculate_accuracy import calculate_accuracy
+from utils.calculate_accuracy import calculate_accuracy, preprocess_text
 import json
 
 app = Flask(__name__)
@@ -70,7 +70,8 @@ def transcribe_audio():
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
 
-            print("Transcription completed:", transcribed_text)
+            # Preprocess the transcribed_text
+            transcribed_text = preprocess_text(transcribed_text)
 
             # Compare the transcribed audio with each choice
             accuracies = {}
