@@ -102,7 +102,3 @@ def calculate_word_accuracy(original_words, transcript_words):
 
     # Ensure word accuracy doesn't go below 0%
     return max(0, (matching_weight / total_words) * penalty_factor)
-
-
-# Testing the updated function with the provided example
-calculate_word_accuracy_v7(original_words_example, transcript_words_example)
