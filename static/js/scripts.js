@@ -11,7 +11,7 @@ highQualityImage.onload = function () {
   document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
 };
 
-// Add an onerror handler in case the image fails to load. test
+// Add an onerror handler in case the image fails to load. test1
 highQualityImage.onerror = function () {
   console.error("Error loading the high-quality image.");
 };
