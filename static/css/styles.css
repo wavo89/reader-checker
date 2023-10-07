@@ -96,8 +96,10 @@ body::before {
 }
 #contentWrapper {
   display: block;
+  width: 60%;
+  max-width: 480px;
   opacity: 0;  
-  transition: opacity 1s;
+  transition: opacity .2s; 
 }
 
 /* #contentWrapper {

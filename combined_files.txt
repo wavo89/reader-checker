@@ -132,11 +132,9 @@ document.body.style.display = "none";
 lowQualityImage.onload = function () {
   console.log("Low-quality image has finished loading!");
 
-  // Once the low-quality image is fully loaded, display the contentWrapper.
-  document.getElementById("contentWrapper").style.display = "block";
-
-  // Show the body once the low-res image is fully loaded
-  document.body.style.display = "block";
+  // Once the low-quality image is fully loaded, fade in the contentWrapper.
+  const contentWrapper = document.getElementById("contentWrapper");
+  contentWrapper.style.opacity = "1"; // This will fade in the contentWrapper using the CSS transition
 
   // Now start loading the high-res image
   loadHighResImage();
@@ -149,31 +147,6 @@ lowQualityImage.onload = function () {
 function fadeOutBeforeNavigationChoice(sceneLink) {
   const url = "/?scene=" + sceneLink;
   fadeOutBeforeNavigation(url);
-}
-
-function fadeOutBeforeNavigation(url) {
-  // Check if the fadeOverlay is already present (to prevent double fade)
-  if (document.getElementById("outgoingBlurOverlay")) return;
-
-  const fadeOverlay = document.createElement("div");
-  fadeOverlay.id = "outgoingBlurOverlay";
-  fadeOverlay.style.position = "fixed";
-  fadeOverlay.style.top = "0";
-  fadeOverlay.style.left = "0";
-  fadeOverlay.style.width = "100vw";
-  fadeOverlay.style.height = "100vh";
-  fadeOverlay.style.backdropFilter = "blur(0%)";
-  fadeOverlay.style.backgroundColor = "rgba(255, 255, 255, 0)"; // Start with transparent white
-  fadeOverlay.style.zIndex = "9999";
-  fadeOverlay.style.pointerEvents = "none";
-  fadeOverlay.style.opacity = "0";
-  fadeOverlay.style.animation = "blurAndFadeToWhite 1s forwards";
-
-  document.body.appendChild(fadeOverlay);
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // Navigate after 1 second
 }
 
 // Add the fade-out animation
@@ -292,10 +265,7 @@ function fadeOutBeforeNavigation(url) {
   blurOverlay.style.animation = "blurFadeIn 1s forwards";
 
   document.body.appendChild(blurOverlay);
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // Navigate after 1 second
+  window.location.href = url;
 }
 
 //

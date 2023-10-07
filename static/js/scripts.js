@@ -11,9 +11,14 @@ document.body.style.display = "none";
 lowQualityImage.onload = function () {
   console.log("Low-quality image has finished loading!");
 
-  // Once the low-quality image is fully loaded, fade in the contentWrapper.
-  const contentWrapper = document.getElementById("contentWrapper");
-  contentWrapper.style.opacity = "1"; // This will fade in the contentWrapper using the CSS transition
+  // Show the body once the low-quality image is fully loaded
+  document.body.style.display = "block";
+
+  // Delay the opacity change by 100ms to ensure the contentWrapper has rendered
+  setTimeout(function () {
+    const contentWrapper = document.getElementById("contentWrapper");
+    contentWrapper.style.opacity = "1"; // This will fade in the contentWrapper using the CSS transition
+  }, 100);
 
   // Now start loading the high-res image
   loadHighResImage();
@@ -130,6 +135,11 @@ function fadeOutBeforeNavigation(url) {
   // Check if the blurOverlay is already present (to prevent double blur)
   if (document.getElementById("outgoingBlurOverlay")) return;
 
+  // Apply the fade-out animation to the contentWrapper
+  const contentWrapper = document.getElementById("contentWrapper");
+  contentWrapper.classList.add("fadeOutAnimation");
+
+  // Create and append the blurOverlay for the blur effect
   const blurOverlay = document.createElement("div");
   blurOverlay.id = "outgoingBlurOverlay";
   blurOverlay.style.position = "fixed";
@@ -144,9 +154,10 @@ function fadeOutBeforeNavigation(url) {
   blurOverlay.style.animation = "blurFadeIn 1s forwards";
 
   document.body.appendChild(blurOverlay);
+
+  // Navigate immediately
   window.location.href = url;
 }
-
 //
 
 function initializeMediaRecorder(stream) {
