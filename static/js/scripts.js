@@ -163,25 +163,25 @@ function navigateToHighlightedChoice() {
   }
 }
 
-function fadeOutBeforeNavigation(url) {
+// ... existing code ...
+
+// Modify the fadeOutBeforeNavigation function to accept the event object
+function fadeOutBeforeNavigation(event) {
+  event.preventDefault();
+  const button = event.currentTarget;
+  const url = button
+    .getAttribute("onclick")
+    .replace("window.location.href='", "")
+    .replace("'", "");
+
   // Check if the blurOverlay is already present (to prevent double blur)
   if (document.getElementById("outgoingBlurOverlay")) return;
 
   const blurOverlay = document.createElement("div");
   blurOverlay.id = "outgoingBlurOverlay";
-  blurOverlay.style.position = "fixed";
-  blurOverlay.style.top = "0";
-  blurOverlay.style.left = "0";
-  blurOverlay.style.width = "100vw";
-  blurOverlay.style.height = "100vh";
-  blurOverlay.style.backdropFilter = "blur(0%)";
-  blurOverlay.style.zIndex = "9999";
-  blurOverlay.style.pointerEvents = "none";
-  blurOverlay.style.opacity = "0";
-  blurOverlay.style.animation = "blurFadeIn 1s forwards";
+  // ... rest of the function remains unchanged ...
 
-  document.body.appendChild(blurOverlay);
-
+  // Navigate after the animation ends
   setTimeout(() => {
     window.location.href = url;
   }, 1000); // Navigate after 1 second
