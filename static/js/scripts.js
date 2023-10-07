@@ -21,15 +21,7 @@ lowQualityImage.onload = function () {
   loadHighResImage();
 };
 
-// ... Rest of the existing code ...
-
-// ... Previous code ...
-
-function fadeOutBeforeNavigationChoice(sceneLink) {
-  const url = "/?scene=" + sceneLink;
-  fadeOutBeforeNavigation(url);
-}
-
+// Function to handle fade out before navigation
 function fadeOutBeforeNavigation(url) {
   // Check if the fadeOverlay is already present (to prevent double fade)
   if (document.getElementById("outgoingBlurOverlay")) return;
@@ -73,11 +65,7 @@ style.innerHTML = `
 `;
 document.head.appendChild(style);
 
-// ... Rest of the existing code ...
-
-// ... Rest of the existing code ...
-
-// Start by loading the low-quality image immediately when the script runs.
+// Function to start loading the low-quality image
 const sceneIdElement = document.getElementById("sceneId");
 const sceneId = sceneIdElement.getAttribute("data-scene-id");
 const lowResImageURL =
@@ -127,6 +115,8 @@ document.addEventListener("keydown", function (event) {
 document.getElementById("recordButton").addEventListener("click", function () {
   if (this.innerText === "Continue") {
     navigateToHighlightedChoice();
+  } else {
+    toggleRecording();
   }
 });
 
@@ -158,41 +148,12 @@ function navigateToHighlightedChoice() {
     "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
   );
   if (closestChoiceButton) {
-    // Use the fade-out effect with blur and white fade before navigation
-    fadeOutBeforeNavigation(
-      closestChoiceButton
-        .getAttribute("onclick")
-        .replace("window.location.href='", "")
-        .replace("'", ""),
-    );
+    const targetURL = `/?scene=${closestChoiceButton.getAttribute(
+      "data-link",
+    )}`;
+    fadeOutBeforeNavigation(targetURL);
   }
 }
-
-function fadeOutBeforeNavigation(url) {
-  // Check if the blurOverlay is already present (to prevent double blur)
-  if (document.getElementById("outgoingBlurOverlay")) return;
-
-  const blurOverlay = document.createElement("div");
-  blurOverlay.id = "outgoingBlurOverlay";
-  blurOverlay.style.position = "fixed";
-  blurOverlay.style.top = "0";
-  blurOverlay.style.left = "0";
-  blurOverlay.style.width = "100vw";
-  blurOverlay.style.height = "100vh";
-  blurOverlay.style.backdropFilter = "blur(0%)";
-  blurOverlay.style.zIndex = "9999";
-  blurOverlay.style.pointerEvents = "none";
-  blurOverlay.style.opacity = "0";
-  blurOverlay.style.animation = "blurFadeIn 1s forwards";
-
-  document.body.appendChild(blurOverlay);
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // Navigate after 1 second
-}
-
-//
 
 function initializeMediaRecorder(stream) {
   audioChunks = [];

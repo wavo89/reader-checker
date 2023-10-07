@@ -21,7 +21,9 @@
         <p id="sceneText">{{ scene.text }}</p>
         <div id="choiceButtons">
             {% for choice in scene.choices %}
-            <button id="choice_{{ loop.index }}" onclick="fadeOutBeforeNavigationChoice('{{ choice.link }}')">{{ choice.text }}</button>
+            <button id="choice_{{ loop.index }}" data-link="{{ choice.link }}" onclick="navigateToChoice(this)">
+                {{ choice.text }}
+            </button>
             {% endfor %}
         </div>
         <p id="transcriptResult">Recording: </p>
