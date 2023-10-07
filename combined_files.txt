@@ -119,6 +119,36 @@ if __name__ == "__main__":
 
 
 ===== static/js/scripts.js =====
+// ... existing code ...
+
+// Create a new Image object to load the low-quality image.
+const lowQualityImage = new Image();
+
+// This will log when the low-quality image starts loading.
+console.log("Starting to load the low-quality image...");
+
+// Add an onload handler for the low-quality image.
+lowQualityImage.onload = function () {
+  console.log("Low-quality image has finished loading!");
+
+  // Once the low-quality image is fully loaded, display the contentWrapper.
+  document.getElementById("contentWrapper").style.display = "block";
+};
+
+// Add an onerror handler in case the low-quality image fails to load.
+lowQualityImage.onerror = function () {
+  console.error("Error loading the low-quality image.");
+};
+
+// Start by loading the low-quality image immediately when the script runs.
+const lowResImageURL =
+  "https://storyscenes.blob.core.windows.net/background-small/" +
+  sceneId +
+  ".jpg";
+lowQualityImage.src = lowResImageURL;
+
+// ... rest of your code ...
+
 // Create a new Image object to load the high-quality image.
 const highQualityImage = new Image();
 
@@ -132,7 +162,7 @@ highQualityImage.onload = function () {
   document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
 };
 
-// Add an onerror handler in case the image fails to load.
+// Add an onerror handler in case the image fails to load. test1
 highQualityImage.onerror = function () {
   console.error("Error loading the high-quality image.");
 };
@@ -141,7 +171,9 @@ highQualityImage.onerror = function () {
 const sceneIdElement = document.getElementById("sceneId");
 const sceneId = sceneIdElement.getAttribute("data-scene-id");
 highQualityImage.src =
-  "https://storyscenes.blob.core.windows.net/image1/" + sceneId + ".jpg";
+  "https://storyscenes.blob.core.windows.net/background-normal/" +
+  sceneId +
+  ".jpg";
 
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
@@ -314,7 +346,7 @@ function getAccuracyEmoji(accuracy) {
     <link rel="stylesheet" href="static/css/styles.css">
     <style>
         body {
-            background-image: url('https://storyscenes.blob.core.windows.net/extra-converted/{{ scene_id }}.jpg');
+            background-image: url('https://storyscenes.blob.core.windows.net/background-small/{{ scene_id }}.jpg');
         }
     </style>
 </head>

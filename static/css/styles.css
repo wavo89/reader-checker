@@ -1,11 +1,10 @@
 body {
   font-family: 'Arial', sans-serif;
-  /* background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center; */
+  background-color: #fff; /* Set a white background color */
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center center;
+  overflow-x: hidden; /* Prevent horizontal scrolling */
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -14,9 +13,62 @@ body {
   color: #333;
   padding-left: 5%;
   padding-top: 5%;
+  position: relative; /* Add relative positioning to the body */
+}
+
+body::before {
+  content: "";
+  position: absolute;
+  top: 0%; 
+  right: 0%; 
+  bottom: 0%; 
+  left: 0%; 
+  z-index: -1; 
+  background-image: var(--background-image-url, url('https://storyscenes.blob.core.windows.net/background-small/{{ scene_id }}.jpg'));
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center center;
+}
+
+/* ... Rest of the CSS remains unchanged ... */
+/* ... Rest of the CSS remains unchanged ... */
+
+@keyframes blurFadeIn {
+  0% {
+    backdrop-filter: blur(0%);
+    opacity: 0;
+  }
+  100% {
+    backdrop-filter: blur(10px);
+    opacity: 1;
+  }
+}
+
+#blurOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  backdrop-filter: blur(10px);  /* Starting with 100% blur */
+  z-index: 9999; /* Ensure it's above all other content */
+  pointer-events: none; /* Make sure it doesn't interfere with user interaction */
+  animation: blurFadeOut 1s forwards; /* Updated animation duration to 1 second */
+}
+
+@keyframes blurFadeOut {
+  0% {
+    backdrop-filter: blur(10px);
+    opacity: 1;
+  }
+  100% {
+    backdrop-filter: blur(0);
+    opacity: 0;
+  }
 }
 
 #contentWrapper {
+  display: none;
   width: 60%;
   max-width: 480px;
 }
@@ -62,16 +114,6 @@ button {
   cursor: pointer;
 }
 
-/* @keyframes blurTransition {
-  0% {
-    filter: blur(100%);
-  }
-  100% {
-    filter: blur(20%);
-  }
-} */
-
-
 button#recordButton { /* Specific selector for the green record button */
   min-height: 50px; /* Increased min-height */
 }
@@ -87,10 +129,7 @@ button:hover {
   width: 100%;
 }
 
-
 #choiceButtons button {
-  /* width: calc(100% - 42px); */
-  /* margin-left: 50px;  */
   text-align: left;  /* Aligns the text to the left */
   background-color: rgba(0, 123, 255, 0.85); /* Translucent blue */
   margin-bottom: 10px;
