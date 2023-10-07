@@ -30,31 +30,6 @@ function fadeOutBeforeNavigationChoice(sceneLink) {
   fadeOutBeforeNavigation(url);
 }
 
-function fadeOutBeforeNavigation(url) {
-  // Check if the fadeOverlay is already present (to prevent double fade)
-  if (document.getElementById("outgoingBlurOverlay")) return;
-
-  const fadeOverlay = document.createElement("div");
-  fadeOverlay.id = "outgoingBlurOverlay";
-  fadeOverlay.style.position = "fixed";
-  fadeOverlay.style.top = "0";
-  fadeOverlay.style.left = "0";
-  fadeOverlay.style.width = "100vw";
-  fadeOverlay.style.height = "100vh";
-  fadeOverlay.style.backdropFilter = "blur(0%)";
-  fadeOverlay.style.backgroundColor = "rgba(255, 255, 255, 0)"; // Start with transparent white
-  fadeOverlay.style.zIndex = "9999";
-  fadeOverlay.style.pointerEvents = "none";
-  fadeOverlay.style.opacity = "0";
-  fadeOverlay.style.animation = "blurAndFadeToWhite 1s forwards";
-
-  document.body.appendChild(fadeOverlay);
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // Navigate after 1 second
-}
-
 // Add the fade-out animation
 const style = document.createElement("style");
 style.innerHTML = `
@@ -171,10 +146,7 @@ function fadeOutBeforeNavigation(url) {
   blurOverlay.style.animation = "blurFadeIn 1s forwards";
 
   document.body.appendChild(blurOverlay);
-
-  setTimeout(() => {
-    window.location.href = url;
-  }, 1000); // Navigate after 1 second
+  window.location.href = url;
 }
 
 //

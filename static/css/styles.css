@@ -16,19 +16,6 @@ body {
   position: relative; /* Add relative positioning to the body */
 }
 
-@keyframes blurAndFadeToWhite {
-  0% {
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 0);
-    opacity: 0;
-  }
-  100% {
-    backdrop-filter: blur(10px);
-    background-color: rgba(255, 255, 255, 1);
-    opacity: 1;
-  }
-}
-
 
 @keyframes fadeIn {
   0% {
@@ -53,7 +40,7 @@ body {
 }
 
 .fadeOutAnimation {
-  animation: fadeOut 1s forwards; 
+  animation: fadeOut .5s forwards; 
 }
 
 
@@ -112,6 +99,8 @@ body::before {
   display: none;
   width: 60%;
   max-width: 480px;
+  /* opacity: 0;   */
+  /* transition: opacity 1s;  */
 }
 
 textarea, button, #transcriptResult, #accuracyResult {
