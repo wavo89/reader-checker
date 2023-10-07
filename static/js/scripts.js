@@ -153,7 +153,7 @@ function navigateToHighlightedChoice() {
     "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
   );
   if (closestChoiceButton) {
-    // Use the fade-out effect before navigation
+    // Use the fade-out effect with blur and white fade before navigation
     fadeOutBeforeNavigation(
       closestChoiceButton
         .getAttribute("onclick")
