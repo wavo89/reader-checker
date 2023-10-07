@@ -11,11 +11,9 @@ document.body.style.display = "none";
 lowQualityImage.onload = function () {
   console.log("Low-quality image has finished loading!");
 
-  // Once the low-quality image is fully loaded, display the contentWrapper.
-  document.getElementById("contentWrapper").style.display = "block";
-
-  // Show the body once the low-res image is fully loaded
-  document.body.style.display = "block";
+  // Once the low-quality image is fully loaded, fade in the contentWrapper.
+  const contentWrapper = document.getElementById("contentWrapper");
+  contentWrapper.style.opacity = "1"; // This will fade in the contentWrapper using the CSS transition
 
   // Now start loading the high-res image
   loadHighResImage();

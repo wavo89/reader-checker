@@ -94,14 +94,19 @@ body::before {
     opacity: 0;
   }
 }
-
 #contentWrapper {
+  display: block;
+  opacity: 0;  
+  transition: opacity 1s;
+}
+
+/* #contentWrapper {
   display: none;
   width: 60%;
   max-width: 480px;
-  /* opacity: 0;   */
-  /* transition: opacity 1s;  */
-}
+  opacity: 0;  
+  transition: opacity 1s; 
+} */
 
 textarea, button, #transcriptResult, #accuracyResult {
   margin: 10px;
