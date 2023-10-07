@@ -272,14 +272,14 @@ function displayTranscriptionResults(data) {
     data.closest_choice_accuracy === 2
   ) {
     recordButton.innerText = "Continue";
-    recordButton.onclick = function() {
+    recordButton.onclick = function () {
       navigateToHighlightedChoice();
-    }
+    };
   } else {
     recordButton.innerText = "Record";
-    recordButton.onclick = function() {
+    recordButton.onclick = function () {
       toggleRecording();
-    }
+    };
   }
 }
 
@@ -288,34 +288,10 @@ function navigateToHighlightedChoice() {
     "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
   );
   if (closestChoiceButton) {
-    const targetURL = `/?scene=${closestChoiceButton.getAttribute("data-link")}`;
+    const targetURL = `/?scene=${closestChoiceButton.getAttribute(
+      "data-link",
+    )}`;
     fadeOutBeforeNavigation(targetURL);
-  }
-}
-
-  // Highlight the closest choice with a neon green border only if accuracy is not red
-  console.log(data.closest_choice_id);
-  if (data.closest_choice_accuracy !== 1) {
-    const closestChoiceButton = document.getElementById(data.closest_choice_id);
-    if (closestChoiceButton) {
-      closestChoiceButton.style.border = "3px solid #39FF14"; // Neon
-    }
-  }
-
-  let accuracyResult = document.getElementById("accuracyResult");
-  accuracyResult.innerHTML = `Accuracy:&nbsp;&nbsp;${getAccuracyEmoji(
-    data.closest_choice_accuracy,
-  )}`;
-
-  // Update the Record button's text based on the accuracy
-  const recordButton = document.getElementById("recordButton");
-  if (
-    data.closest_choice_accuracy === 3 ||
-    data.closest_choice_accuracy === 2
-  ) {
-    recordButton.innerText = "Continue";
-  } else {
-    recordButton.innerText = "Record";
   }
 }
 
