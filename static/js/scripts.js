@@ -25,6 +25,11 @@ lowQualityImage.onload = function () {
 
 // ... Previous code ...
 
+function fadeOutBeforeNavigationChoice(sceneLink) {
+  const url = "/?scene=" + sceneLink;
+  fadeOutBeforeNavigation(url);
+}
+
 function fadeOutBeforeNavigation(url) {
   // Check if the fadeOverlay is already present (to prevent double fade)
   if (document.getElementById("outgoingBlurOverlay")) return;

@@ -119,13 +119,14 @@ if __name__ == "__main__":
 
 
 ===== static/js/scripts.js =====
-// ... existing code ...
-
 // Create a new Image object to load the low-quality image.
 const lowQualityImage = new Image();
 
 // This will log when the low-quality image starts loading.
 console.log("Starting to load the low-quality image...");
+
+// Hide the body initially
+document.body.style.display = "none";
 
 // Add an onload handler for the low-quality image.
 lowQualityImage.onload = function () {
@@ -133,47 +134,99 @@ lowQualityImage.onload = function () {
 
   // Once the low-quality image is fully loaded, display the contentWrapper.
   document.getElementById("contentWrapper").style.display = "block";
+
+  // Show the body once the low-res image is fully loaded
+  document.body.style.display = "block";
+
+  // Now start loading the high-res image
+  loadHighResImage();
 };
 
-// Add an onerror handler in case the low-quality image fails to load.
-lowQualityImage.onerror = function () {
-  console.error("Error loading the low-quality image.");
-};
+// ... Rest of the existing code ...
+
+// ... Previous code ...
+
+function fadeOutBeforeNavigation(url) {
+  // Check if the fadeOverlay is already present (to prevent double fade)
+  if (document.getElementById("outgoingBlurOverlay")) return;
+
+  const fadeOverlay = document.createElement("div");
+  fadeOverlay.id = "outgoingBlurOverlay";
+  fadeOverlay.style.position = "fixed";
+  fadeOverlay.style.top = "0";
+  fadeOverlay.style.left = "0";
+  fadeOverlay.style.width = "100vw";
+  fadeOverlay.style.height = "100vh";
+  fadeOverlay.style.backdropFilter = "blur(0%)";
+  fadeOverlay.style.backgroundColor = "rgba(255, 255, 255, 0)"; // Start with transparent white
+  fadeOverlay.style.zIndex = "9999";
+  fadeOverlay.style.pointerEvents = "none";
+  fadeOverlay.style.opacity = "0";
+  fadeOverlay.style.animation = "blurAndFadeToWhite 1s forwards";
+
+  document.body.appendChild(fadeOverlay);
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 1000); // Navigate after 1 second
+}
+
+// Add the fade-out animation
+const style = document.createElement("style");
+style.innerHTML = `
+  @keyframes blurAndFadeToWhite {
+    0% {
+      backdrop-filter: blur(0%);
+      background-color: rgba(255, 255, 255, 0);
+      opacity: 0;
+    }
+    100% {
+      backdrop-filter: blur(10px);
+      background-color: rgba(255, 255, 255, 1);
+      opacity: 1;
+    }
+  }
+`;
+document.head.appendChild(style);
+
+// ... Rest of the existing code ...
+
+// ... Rest of the existing code ...
 
 // Start by loading the low-quality image immediately when the script runs.
+const sceneIdElement = document.getElementById("sceneId");
+const sceneId = sceneIdElement.getAttribute("data-scene-id");
 const lowResImageURL =
   "https://storyscenes.blob.core.windows.net/background-small/" +
   sceneId +
   ".jpg";
 lowQualityImage.src = lowResImageURL;
 
-// ... rest of your code ...
+function loadHighResImage() {
+  // Create a new Image object to load the high-quality image.
+  const highQualityImage = new Image();
 
-// Create a new Image object to load the high-quality image.
-const highQualityImage = new Image();
+  // This will log when the high-quality image starts loading.
+  console.log("Starting to load the high-quality image...");
 
-// This will log when the image starts loading.
-console.log("Starting to load the high-quality image...");
+  // Add an onload handler for this image.
+  highQualityImage.onload = function () {
+    console.log("High-quality image has finished loading!");
+    // Once the high-quality image is fully loaded, set it as the background.
+    document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
+  };
 
-// Add an onload handler for this image.
-highQualityImage.onload = function () {
-  console.log("High-quality image has finished loading!");
-  // Once the high-quality image is fully loaded, set it as the background.
-  document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
-};
+  // Add an onerror handler in case the high-quality image fails to load.
+  highQualityImage.onerror = function () {
+    console.error("Error loading the high-quality image.");
+  };
 
-// Add an onerror handler in case the image fails to load. test1
-highQualityImage.onerror = function () {
-  console.error("Error loading the high-quality image.");
-};
-
-// Start by loading the high-quality image immediately when the script runs.
-const sceneIdElement = document.getElementById("sceneId");
-const sceneId = sceneIdElement.getAttribute("data-scene-id");
-highQualityImage.src =
-  "https://storyscenes.blob.core.windows.net/background-normal/" +
-  sceneId +
-  ".jpg";
+  // Load the high-quality image.
+  highQualityImage.src =
+    "https://storyscenes.blob.core.windows.net/background-normal/" +
+    sceneId +
+    ".jpg";
+}
 
 document.addEventListener("keydown", function (event) {
   if (event.code === "Space") {
@@ -221,12 +274,41 @@ function navigateToHighlightedChoice() {
     "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
   );
   if (closestChoiceButton) {
-    window.location.href = closestChoiceButton
-      .getAttribute("onclick")
-      .replace("window.location.href='", "")
-      .replace("'", "");
+    // Use the fade-out effect with blur and white fade before navigation
+    fadeOutBeforeNavigation(
+      closestChoiceButton
+        .getAttribute("onclick")
+        .replace("window.location.href='", "")
+        .replace("'", ""),
+    );
   }
 }
+
+function fadeOutBeforeNavigation(url) {
+  // Check if the blurOverlay is already present (to prevent double blur)
+  if (document.getElementById("outgoingBlurOverlay")) return;
+
+  const blurOverlay = document.createElement("div");
+  blurOverlay.id = "outgoingBlurOverlay";
+  blurOverlay.style.position = "fixed";
+  blurOverlay.style.top = "0";
+  blurOverlay.style.left = "0";
+  blurOverlay.style.width = "100vw";
+  blurOverlay.style.height = "100vh";
+  blurOverlay.style.backdropFilter = "blur(0%)";
+  blurOverlay.style.zIndex = "9999";
+  blurOverlay.style.pointerEvents = "none";
+  blurOverlay.style.opacity = "0";
+  blurOverlay.style.animation = "blurFadeIn 1s forwards";
+
+  document.body.appendChild(blurOverlay);
+
+  setTimeout(() => {
+    window.location.href = url;
+  }, 1000); // Navigate after 1 second
+}
+
+//
 
 function initializeMediaRecorder(stream) {
   audioChunks = [];
@@ -303,7 +385,6 @@ function displayTranscriptionResults(data) {
   // Highlight the closest choice with a neon green border only if accuracy is not red
   console.log(data.closest_choice_id);
   if (data.closest_choice_accuracy !== 1) {
-    // Check if accuracy is not red
     const closestChoiceButton = document.getElementById(data.closest_choice_id);
     if (closestChoiceButton) {
       closestChoiceButton.style.border = "3px solid #39FF14"; // Neon
@@ -321,13 +402,20 @@ function displayTranscriptionResults(data) {
     data.closest_choice_accuracy === 3 ||
     data.closest_choice_accuracy === 2
   ) {
-    // If accuracy is green or yellow
     recordButton.innerText = "Continue";
   } else {
-    // If accuracy is red
     recordButton.innerText = "Record";
   }
 }
+
+window.addEventListener("load", function () {
+  setTimeout(function () {
+    const blurOverlay = document.getElementById("blurOverlay");
+    if (blurOverlay) {
+      blurOverlay.remove();
+    }
+  }, 1000); // 1 second
+});
 
 function getAccuracyEmoji(accuracy) {
   if (accuracy === 3) return "🟢";
@@ -351,6 +439,8 @@ function getAccuracyEmoji(accuracy) {
     </style>
 </head>
 <body>
+    <div id="blurOverlay"></div> <!-- Here's the blur overlay div -->
+
     <!-- Hidden div to store scene_id for JavaScript to access -->
     <div id="sceneId" data-scene-id="{{ scene_id }}" style="display: none;"></div>
 
