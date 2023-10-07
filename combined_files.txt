@@ -146,6 +146,11 @@ lowQualityImage.onload = function () {
 
 // ... Previous code ...
 
+function fadeOutBeforeNavigationChoice(sceneLink) {
+  const url = "/?scene=" + sceneLink;
+  fadeOutBeforeNavigation(url);
+}
+
 function fadeOutBeforeNavigation(url) {
   // Check if the fadeOverlay is already present (to prevent double fade)
   if (document.getElementById("outgoingBlurOverlay")) return;
@@ -269,21 +274,6 @@ function startRecording() {
   });
 }
 
-function navigateToHighlightedChoice() {
-  const closestChoiceButton = document.querySelector(
-    "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
-  );
-  if (closestChoiceButton) {
-    // Use the fade-out effect with blur and white fade before navigation
-    fadeOutBeforeNavigation(
-      closestChoiceButton
-        .getAttribute("onclick")
-        .replace("window.location.href='", "")
-        .replace("'", ""),
-    );
-  }
-}
-
 function fadeOutBeforeNavigation(url) {
   // Check if the blurOverlay is already present (to prevent double blur)
   if (document.getElementById("outgoingBlurOverlay")) return;
@@ -403,11 +393,34 @@ function displayTranscriptionResults(data) {
     data.closest_choice_accuracy === 2
   ) {
     recordButton.innerText = "Continue";
+    recordButton.onclick = function () {
+      navigateToHighlightedChoice();
+    };
   } else {
     recordButton.innerText = "Record";
+    recordButton.onclick = function () {
+      toggleRecording();
+    };
   }
 }
 
+function navigateToHighlightedChoice() {
+  const closestChoiceButton = document.querySelector(
+    "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
+  );
+  if (closestChoiceButton) {
+    const sceneLink = closestChoiceButton.getAttribute("data-link");
+    fadeOutBeforeNavigationChoice(sceneLink);
+  }
+}
+
+// Add event listeners to the choice buttons to handle navigation
+document.querySelectorAll("#choiceButtons button").forEach((button) => {
+  button.addEventListener("click", function () {
+    const sceneLink = button.getAttribute("data-link");
+    fadeOutBeforeNavigationChoice(sceneLink);
+  });
+});
 window.addEventListener("load", function () {
   setTimeout(function () {
     const blurOverlay = document.getElementById("blurOverlay");
@@ -415,6 +428,14 @@ window.addEventListener("load", function () {
       blurOverlay.remove();
     }
   }, 1000); // 1 second
+});
+
+// Add event listeners to the choice buttons to handle navigation
+document.querySelectorAll("#choiceButtons button").forEach((button) => {
+  button.addEventListener("click", function () {
+    const targetURL = `/?scene=${button.getAttribute("data-link")}`;
+    fadeOutBeforeNavigation(targetURL);
+  });
 });
 
 function getAccuracyEmoji(accuracy) {
@@ -448,7 +469,9 @@ function getAccuracyEmoji(accuracy) {
         <p id="sceneText">{{ scene.text }}</p>
         <div id="choiceButtons">
             {% for choice in scene.choices %}
-            <button id="choice_{{ loop.index }}" onclick="window.location.href='/?scene={{ choice.link }}'">{{ choice.text }}</button>
+            <button id="choice_{{ loop.index }}" data-link="{{ choice.link }}" onclick="navigateToChoice(this)">
+                {{ choice.text }}
+            </button>
             {% endfor %}
         </div>
         <p id="transcriptResult">Recording: </p>

@@ -288,13 +288,18 @@ function navigateToHighlightedChoice() {
     "#choiceButtons button[style='border: 3px solid rgb(57, 255, 20);']",
   );
   if (closestChoiceButton) {
-    const targetURL = `/?scene=${closestChoiceButton.getAttribute(
-      "data-link",
-    )}`;
-    fadeOutBeforeNavigation(targetURL);
+    const sceneLink = closestChoiceButton.getAttribute("data-link");
+    fadeOutBeforeNavigationChoice(sceneLink);
   }
 }
 
+// Add event listeners to the choice buttons to handle navigation
+document.querySelectorAll("#choiceButtons button").forEach((button) => {
+  button.addEventListener("click", function () {
+    const sceneLink = button.getAttribute("data-link");
+    fadeOutBeforeNavigationChoice(sceneLink);
+  });
+});
 window.addEventListener("load", function () {
   setTimeout(function () {
     const blurOverlay = document.getElementById("blurOverlay");

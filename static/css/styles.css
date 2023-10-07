@@ -16,6 +16,47 @@ body {
   position: relative; /* Add relative positioning to the body */
 }
 
+@keyframes blurAndFadeToWhite {
+  0% {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 0);
+    opacity: 0;
+  }
+  100% {
+    backdrop-filter: blur(10px);
+    background-color: rgba(255, 255, 255, 1);
+    opacity: 1;
+  }
+}
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1; 
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;  
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.fadeInAnimation {
+  animation: fadeIn 1s forwards;  
+}
+
+.fadeOutAnimation {
+  animation: fadeOut 1s forwards; 
+}
+
+
 body::before {
   content: "";
   position: absolute;
