@@ -1,6 +1,30 @@
 let isTransitioning = false;
 
+// let isFirstLoad = true;
+window.addEventListener("popstate", function (event) {
+  // if (isFirstLoad) {
+  //   isFirstLoad = false;
+  //   return;
+  // }
+  console.log("popstate event triggered. Current state:", history.state);
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const sceneId = urlParams.get("scene");
+  if (sceneId) {
+    loadScene(sceneId, false); // Note the `false` here, this means we don't push the state again.
+  }
+});
+
+const originalPushState = history.pushState;
+history.pushState = function () {
+  console.log("pushState called:", ...arguments);
+  return originalPushState.apply(history, arguments);
+};
+
 function navigateToChoice(buttonElement) {
+  console.log("navigateToChoice called");
+  console.log("Event target:", event.target);
+
   const blurOverlay = document.getElementById("blurOverlay");
   if (blurOverlay) {
     blurOverlay.style.animation = "blurFadeIn 1s forwards";
@@ -28,6 +52,8 @@ function resetUIAfterTransition() {
 let nextSceneImagesPreloaded = false; // New variable to track next scenes' image preload status
 
 function loadScene(sceneId, updateURL = false) {
+  console.log("loadScene called with:", sceneId, "updateURL:", updateURL);
+
   isTransitioning = true; // Set to true when starting to load a scene
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
   choiceButtons.forEach((button) => {
@@ -353,14 +379,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  document.querySelectorAll("#choiceButtons button").forEach((button) => {
-    button.addEventListener("click", function () {
-      const sceneLink = button.getAttribute("data-link");
-      loadScene(sceneLink, true);
-      // Preload images for the next scenes
-      preloadImage(sceneLink, "high");
-    });
-  });
+  // document.querySelectorAll("#choiceButtons button").forEach((button) => {
+  //   button.addEventListener("click", function (event) {
+  //     const sceneLink = button.getAttribute("data-link");
+  //     navigateToChoice(button, event); // Pass the event to the function
+  //     preloadImage(sceneLink, "high");
+  //   });
+  // });
 
   window.addEventListener("load", function () {
     setTimeout(function () {

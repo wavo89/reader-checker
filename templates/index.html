@@ -21,14 +21,16 @@
         <p id="sceneText">{{ scene.text }}</p>
         <div id="choiceButtons">
             {% for choice in scene.choices %}
-            <button id="choice_{{ loop.index }}" data-link="{{ choice.link }}" onclick="navigateToChoice(this)">
+            <!-- Removed the inline onclick event -->
+            <button id="choice_{{ loop.index }}" data-link="{{ choice.link }}">
                 {{ choice.text }}
             </button>
-                        {% endfor %}
+            {% endfor %}
         </div>
         <p id="transcriptResult">Recording: </p>
         <p id="accuracyResult">Accuracy:&nbsp;&nbsp;----</p>
-        <button id="recordButton" onclick="toggleRecording()">Record</button>
+        <!-- Removed the inline onclick event -->
+        <button id="recordButton">Record</button>
     </div>
     <script src="static/js/scripts.js"></script>
 </body>
