@@ -12,8 +12,7 @@ function navigateToChoice(buttonElement) {
 function resetUIAfterTransition() {
   document.getElementById("recordButton").innerText = "Record";
   document.getElementById("transcriptResult").innerText = "Recording: ";
-  document.getElementById("accuracyResult").innerText =
-    "Accuracy:&nbsp;&nbsp;----";
+  document.getElementById("accuracyResult").innerText = "Accuracy:  ----";
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
   choiceButtons.forEach((button) => {
     button.style.border = "none";
