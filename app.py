@@ -19,6 +19,15 @@ def index():
     return render_template("index.html", scene=scene, scene_id=scene_id)
 
 
+@app.route("/get-scene")
+def get_scene():
+    scene_id = request.args.get("scene", "hex1")
+    with open("scenes/scenes.json", "r") as f:
+        scenes = json.load(f)
+        scene = scenes.get(scene_id, scenes["hex1"])
+    return jsonify(scene)
+
+
 @app.route("/scenes/<filename>")
 def serve_scene_file(filename):
     return send_from_directory("scenes", filename)
