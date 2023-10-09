@@ -20,6 +20,8 @@ function resetUIAfterTransition() {
   });
 }
 
+// ... [The other functions remain unchanged]
+
 function loadScene(sceneId, updateURL = false) {
   const contentWrapper = document.getElementById("contentWrapper");
 
@@ -27,62 +29,72 @@ function loadScene(sceneId, updateURL = false) {
   contentWrapper.classList.add("fadeOutAnimation");
   contentWrapper.classList.remove("fadeInAnimation");
 
-  // Load the low-resolution image in the background.
-  const newLowQualityImage = new Image();
+  fetch(`/get-scene?scene=${sceneId}`)
+    .then((response) => response.json())
+    .then((scene) => {
+      document.getElementById("sceneText").innerText = scene.text;
 
-  newLowQualityImage.onload = function () {
-    // Apply the low-res image as the background and start fading out the old scene.
-    document.body.style.backgroundImage = `url(${newLowQualityImage.src})`;
-    contentWrapper.classList.add("fadeOutAnimation");
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+      choiceButtons.forEach((button, index) => {
+        if (scene.choices && scene.choices[index]) {
+          button.innerText = scene.choices[index].text;
+          button.setAttribute("data-link", scene.choices[index].link);
+        } else {
+          button.style.display = "none"; // Hide any extra buttons that are not used in this scene
+        }
+      });
 
-    setTimeout(() => {
-      fetch(`/get-scene?scene=${sceneId}`)
-        .then((response) => response.json())
-        .then((scene) => {
-          document.getElementById("sceneText").innerText = scene.text;
+      // Reset the UI while the container is fully invisible
+      resetUIAfterTransition();
 
-          const choiceButtons = document.querySelectorAll(
-            "#choiceButtons button",
-          );
-          choiceButtons.forEach((button, index) => {
-            if (scene.choices && scene.choices[index]) {
-              button.innerText = scene.choices[index].text;
-              button.setAttribute("data-link", scene.choices[index].link);
-            } else {
-              button.style.display = "none"; // Hide any extra buttons that are not used in this scene
-            }
-          });
+      // Load the high-resolution image.
+      preloadImage(sceneId, "high").then((highResUrl) => {
+        // Replace the background image with the high-res image.
+        document.body.style.backgroundImage = `url(${highResUrl})`;
+      });
 
-          // Reset the UI while the container is fully invisible
-          resetUIAfterTransition();
+      // Fade in the updated content
+      contentWrapper.classList.remove("fadeOutAnimation");
+      contentWrapper.classList.add("fadeInAnimation");
 
-          // Load the high-resolution image.
-          const highQualityImage = new Image();
-          highQualityImage.onload = function () {
-            // Replace the low-res image with the high-res image in the background.
-            document.body.style.backgroundImage = `url(${highQualityImage.src})`;
-          };
-          highQualityImage.src =
-            "https://storyscenes.blob.core.windows.net/background-normal/" +
-            sceneId +
-            ".jpg";
-
-          // Fade in the updated content
-          contentWrapper.classList.remove("fadeOutAnimation");
-          contentWrapper.classList.add("fadeInAnimation");
-
-          if (updateURL) {
-            history.pushState(null, "", `/?scene=${sceneId}`);
-          }
-        });
-    }, 500);
-  };
-
-  newLowQualityImage.src =
-    "https://storyscenes.blob.core.windows.net/background-small/" +
-    sceneId +
-    ".jpg";
+      if (updateURL) {
+        history.pushState(null, "", `/?scene=${sceneId}`);
+      }
+    });
 }
+
+function preloadImage(sceneId, quality = "low") {
+  return new Promise((resolve, reject) => {
+    const imageUrl = `https://storyscenes.blob.core.windows.net/background-${
+      quality === "low" ? "small" : "normal"
+    }/${sceneId}.jpg`;
+    const image = new Image();
+
+    image.onload = () => {
+      resolve(imageUrl);
+    };
+
+    image.onerror = reject;
+
+    image.src = imageUrl;
+  });
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+  // ... [Rest of the DOMContentLoaded code remains unchanged]
+
+  document.querySelectorAll("#choiceButtons button").forEach((button) => {
+    button.addEventListener("click", function () {
+      const sceneLink = button.getAttribute("data-link");
+      loadScene(sceneLink, true);
+      // Preload images for the next scenes
+      preloadImage(sceneLink, "low");
+      preloadImage(sceneLink, "high");
+    });
+  });
+
+  // ... [Rest of the DOMContentLoaded code remains unchanged]
+});
 
 document.addEventListener("DOMContentLoaded", function () {
   // Create a new Image object to load the low-quality image.
