@@ -1,3 +1,5 @@
+let isTransitioning = false;
+
 function navigateToChoice(buttonElement) {
   const blurOverlay = document.getElementById("blurOverlay");
   if (blurOverlay) {
@@ -26,6 +28,13 @@ function resetUIAfterTransition() {
 let nextSceneImagesPreloaded = false; // New variable to track next scenes' image preload status
 
 function loadScene(sceneId, updateURL = false) {
+  isTransitioning = true; // Set to true when starting to load a scene
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    button.disabled = true;
+  });
+  document.getElementById("recordButton").disabled = true;
+
   const contentWrapper = document.getElementById("contentWrapper");
 
   // Begin by fading out the current content
@@ -64,6 +73,12 @@ function loadScene(sceneId, updateURL = false) {
         contentWrapper.style.opacity = "1";
         contentWrapper.classList.remove("fadeOutAnimation");
         contentWrapper.classList.add("fadeInAnimation");
+        choiceButtons.forEach((button) => {
+          button.disabled = false;
+        });
+        document.getElementById("recordButton").disabled = false;
+
+        isTransitioning = false; // Set to false after the fade-in transition
       }, 500);
 
       if (updateURL) {
@@ -176,7 +191,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", function (event) {
-    if (event.code === "Space") {
+    if (!isTransitioning && event.code === "Space") {
+      // Check the isTransitioning flag here
       const recordButton = document.getElementById("recordButton");
       if (recordButton.innerText === "Continue") {
         navigateToHighlightedChoice();
@@ -190,10 +206,13 @@ document.addEventListener("DOMContentLoaded", function () {
   document
     .getElementById("recordButton")
     .addEventListener("click", function () {
-      if (this.innerText === "Continue") {
-        navigateToHighlightedChoice();
-      } else {
-        toggleRecording();
+      if (!isTransitioning) {
+        // Check the isTransitioning flag here
+        if (this.innerText === "Continue") {
+          navigateToHighlightedChoice();
+        } else {
+          toggleRecording();
+        }
       }
     });
 
