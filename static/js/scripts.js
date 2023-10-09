@@ -192,8 +192,11 @@ function cleanupMediaRecorder() {
   tracks.forEach((track) => track.stop());
 }
 
+let isTranscribing = false;
+
 function processTranscription() {
   document.getElementById("recordButton").innerText = "Transcribing...";
+  isTranscribing = true; // Set the flag to true
   isRecording = false;
 
   sendAudioForTranscription().then((data) => {
@@ -224,6 +227,7 @@ function displayTranscriptionResults(data) {
   document.getElementById(
     "transcriptResult",
   ).innerText = `Recording: ${data.transcript}`;
+  isTranscribing = false; // Set the flag back to false
   console.log("Transcript from Whisper:", data.transcript);
 
   // Reset borders for all choices
