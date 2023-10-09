@@ -115,6 +115,8 @@ function preloadImage(sceneId, quality = "low") {
 
 document.addEventListener("DOMContentLoaded", function () {
   // Disable initial interactions
+  isTransitioning = true; // Set this flag to true at the start
+
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
   choiceButtons.forEach((button) => {
     button.disabled = true;
@@ -175,6 +177,7 @@ document.addEventListener("DOMContentLoaded", function () {
           button.disabled = false;
         });
         document.getElementById("recordButton").disabled = false;
+        isTransitioning = false; // Set this flag to false here, after the preloading is done
       });
     };
 
@@ -191,15 +194,17 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", function (event) {
-    if (!isTransitioning && event.code === "Space") {
-      // Check the isTransitioning flag here
-      const recordButton = document.getElementById("recordButton");
-      if (recordButton.innerText === "Continue") {
-        navigateToHighlightedChoice();
-      } else {
-        toggleRecording();
+    if (event.code === "Space") {
+      event.preventDefault(); // Prevent default behavior (i.e., scrolling)
+
+      if (!isTransitioning) {
+        const recordButton = document.getElementById("recordButton");
+        if (recordButton.innerText === "Continue") {
+          navigateToHighlightedChoice();
+        } else {
+          toggleRecording();
+        }
       }
-      event.preventDefault();
     }
   });
 
