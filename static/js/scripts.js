@@ -7,14 +7,29 @@ function navigateToChoice(buttonElement) {
   loadScene(sceneLink, true);
 }
 
+function resetUIAfterTransition() {
+  document.getElementById("recordButton").innerText = "Record";
+  document.getElementById("transcriptResult").innerText = "Recording: ";
+  document.getElementById("accuracyResult").innerText =
+    "Accuracy:&nbsp;&nbsp;----";
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    button.style.border = "none";
+  });
+}
+
 function loadScene(sceneId, updateURL = false) {
   const contentWrapper = document.getElementById("contentWrapper");
 
-  // Step 1: Load the low-resolution image in the background.
+  // Begin by fading out the current content
+  contentWrapper.classList.add("fadeOutAnimation");
+  contentWrapper.classList.remove("fadeInAnimation");
+
+  // Load the low-resolution image in the background.
   const newLowQualityImage = new Image();
 
   newLowQualityImage.onload = function () {
-    // Step 2: Apply the low-res image as the background and start fading out the old scene.
+    // Apply the low-res image as the background and start fading out the old scene.
     document.body.style.backgroundImage = `url(${newLowQualityImage.src})`;
     contentWrapper.classList.add("fadeOutAnimation");
 
@@ -31,13 +46,15 @@ function loadScene(sceneId, updateURL = false) {
             if (scene.choices && scene.choices[index]) {
               button.innerText = scene.choices[index].text;
               button.setAttribute("data-link", scene.choices[index].link);
+            } else {
+              button.style.display = "none"; // Hide any extra buttons that are not used in this scene
             }
           });
 
-          // Step 3: Start loading the high-resolution image.
+          // Load the high-resolution image.
           const highQualityImage = new Image();
           highQualityImage.onload = function () {
-            // Step 4: Replace the low-res image with the high-res image in the background.
+            // Replace the low-res image with the high-res image in the background.
             document.body.style.backgroundImage = `url(${highQualityImage.src})`;
           };
           highQualityImage.src =
@@ -45,6 +62,7 @@ function loadScene(sceneId, updateURL = false) {
             sceneId +
             ".jpg";
 
+          // Fade in the updated content
           contentWrapper.classList.remove("fadeOutAnimation");
           contentWrapper.classList.add("fadeInAnimation");
 
