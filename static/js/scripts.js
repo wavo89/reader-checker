@@ -220,10 +220,10 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", function (event) {
-    if (event.code === "Space" && !isTranscribing) {
+    if (event.code === "Space") {
       event.preventDefault(); // Prevent default behavior (i.e., scrolling)
 
-      if (!isTransitioning) {
+      if (!isTransitioning & !isTranscribing) {
         const recordButton = document.getElementById("recordButton");
         if (recordButton.innerText === "Continue") {
           navigateToHighlightedChoice();
