@@ -4,9 +4,11 @@ function navigateToChoice(buttonElement) {
     blurOverlay.style.animation = "blurFadeIn 1s forwards";
   }
   const sceneLink = buttonElement.getAttribute("data-link");
+
+  resetUIAfterTransition(); // Resetting the UI
+
   loadScene(sceneLink, true);
 }
-
 function resetUIAfterTransition() {
   document.getElementById("recordButton").innerText = "Record";
   document.getElementById("transcriptResult").innerText = "Recording: ";
