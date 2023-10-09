@@ -220,7 +220,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", function (event) {
-    if (event.code === "Space") {
+    if (event.code === "Space" && !isTranscribing) {
       event.preventDefault(); // Prevent default behavior (i.e., scrolling)
 
       if (!isTransitioning) {
