@@ -306,6 +306,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function processTranscription() {
     document.getElementById("recordButton").innerText = "Transcribing...";
+    document.getElementById("recordButton").disabled = true; // Disable the button here
     isTranscribing = true;
     isRecording = false;
 
@@ -359,6 +360,8 @@ document.addEventListener("DOMContentLoaded", function () {
     )}`;
 
     const recordButton = document.getElementById("recordButton");
+    recordButton.disabled = false; // Re-enable the button here
+
     if (
       data.closest_choice_accuracy === 3 ||
       data.closest_choice_accuracy === 2
