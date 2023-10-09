@@ -53,6 +53,9 @@ function loadScene(sceneId, updateURL = false) {
             }
           });
 
+          // Reset the UI while the container is fully invisible
+          resetUIAfterTransition();
+
           // Load the high-resolution image.
           const highQualityImage = new Image();
           highQualityImage.onload = function () {
