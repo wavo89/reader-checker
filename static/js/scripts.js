@@ -41,23 +41,26 @@ function loadScene(sceneId, updateURL = false) {
     })
     .then((response) => response.json())
     .then((scene) => {
-      document.getElementById("sceneText").innerText = scene.text;
-
-      const choiceButtons = document.querySelectorAll("#choiceButtons button");
-      choiceButtons.forEach((button, index) => {
-        if (scene.choices && scene.choices[index]) {
-          button.innerText = scene.choices[index].text;
-          button.setAttribute("data-link", scene.choices[index].link);
-        } else {
-          button.style.display = "none"; // Hide any extra buttons that are not used in this scene
-        }
-      });
-
-      // Reset the UI while the container is fully invisible
-      resetUIAfterTransition();
-
       // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
       setTimeout(() => {
+        // Update scene text and choices text here
+        document.getElementById("sceneText").innerText = scene.text;
+
+        const choiceButtons = document.querySelectorAll(
+          "#choiceButtons button",
+        );
+        choiceButtons.forEach((button, index) => {
+          if (scene.choices && scene.choices[index]) {
+            button.innerText = scene.choices[index].text;
+            button.setAttribute("data-link", scene.choices[index].link);
+          } else {
+            button.style.display = "none"; // Hide any extra buttons that are not used in this scene
+          }
+        });
+
+        // Reset the UI while the container is fully invisible
+        resetUIAfterTransition();
+
         contentWrapper.style.opacity = "1";
         contentWrapper.classList.remove("fadeOutAnimation");
         contentWrapper.classList.add("fadeInAnimation");
@@ -77,6 +80,7 @@ function loadScene(sceneId, updateURL = false) {
       }
     });
 }
+
 function preloadImage(sceneId, quality = "low") {
   return new Promise((resolve, reject) => {
     const imageUrl = `https://storyscenes.blob.core.windows.net/background-${
