@@ -22,14 +22,22 @@ function resetUIAfterTransition() {
 
 // ... [The other functions remain unchanged]
 
+// ... [Other functions remain unchanged]
+
 function loadScene(sceneId, updateURL = false) {
   const contentWrapper = document.getElementById("contentWrapper");
 
   // Begin by fading out the current content
   contentWrapper.classList.add("fadeOutAnimation");
   contentWrapper.classList.remove("fadeInAnimation");
+  contentWrapper.style.opacity = "0"; // Hide the content during the transition
 
-  fetch(`/get-scene?scene=${sceneId}`)
+  preloadImage(sceneId, "high")
+    .then((highResUrl) => {
+      // Replace the background image with the high-res image.
+      document.body.style.backgroundImage = `url(${highResUrl})`;
+      return fetch(`/get-scene?scene=${sceneId}`);
+    })
     .then((response) => response.json())
     .then((scene) => {
       document.getElementById("sceneText").innerText = scene.text;
@@ -47,15 +55,12 @@ function loadScene(sceneId, updateURL = false) {
       // Reset the UI while the container is fully invisible
       resetUIAfterTransition();
 
-      // Load the high-resolution image.
-      preloadImage(sceneId, "high").then((highResUrl) => {
-        // Replace the background image with the high-res image.
-        document.body.style.backgroundImage = `url(${highResUrl})`;
-      });
-
-      // Fade in the updated content
-      contentWrapper.classList.remove("fadeOutAnimation");
-      contentWrapper.classList.add("fadeInAnimation");
+      // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
+      setTimeout(() => {
+        contentWrapper.style.opacity = "1";
+        contentWrapper.classList.remove("fadeOutAnimation");
+        contentWrapper.classList.add("fadeInAnimation");
+      }, 500);
 
       if (updateURL) {
         history.pushState(null, "", `/?scene=${sceneId}`);
@@ -81,22 +86,6 @@ function preloadImage(sceneId, quality = "low") {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
-  // ... [Rest of the DOMContentLoaded code remains unchanged]
-
-  document.querySelectorAll("#choiceButtons button").forEach((button) => {
-    button.addEventListener("click", function () {
-      const sceneLink = button.getAttribute("data-link");
-      loadScene(sceneLink, true);
-      // Preload images for the next scenes
-      preloadImage(sceneLink, "low");
-      preloadImage(sceneLink, "high");
-    });
-  });
-
-  // ... [Rest of the DOMContentLoaded code remains unchanged]
-});
-
-document.addEventListener("DOMContentLoaded", function () {
   // Create a new Image object to load the low-quality image.
   const lowQualityImage = new Image();
   console.log("Starting to load the low-quality image...");
@@ -105,11 +94,7 @@ document.addEventListener("DOMContentLoaded", function () {
   lowQualityImage.onload = function () {
     console.log("Low-quality image has finished loading!");
     document.body.style.display = "block";
-
-    setTimeout(function () {
-      const contentWrapper = document.getElementById("contentWrapper");
-      contentWrapper.style.opacity = "1";
-    }, 100);
+    document.getElementById("contentWrapper").style.opacity = "1"; // Show the content once low-res is loaded
 
     loadHighResImage();
   };
@@ -305,6 +290,8 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       const sceneLink = button.getAttribute("data-link");
       loadScene(sceneLink, true);
+      // Preload images for the next scenes
+      preloadImage(sceneLink, "high");
     });
   });
 
