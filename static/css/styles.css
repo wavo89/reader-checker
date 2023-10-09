@@ -18,6 +18,25 @@ body {
 
 }
 
+@keyframes fadeInHalf {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 0.5;
+  }
+}
+
+@keyframes fadeInFull {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
 
 @keyframes fadeIn {
   0% {
@@ -42,7 +61,7 @@ body {
 }
 
 .fadeOutAnimation {
-  animation: fadeOut .5s forwards; 
+  animation: fadeOut 1s forwards; 
 }
 
 
@@ -60,8 +79,6 @@ body::before {
   background-position: center center;
 }
 
-/* ... Rest of the CSS remains unchanged ... */
-/* ... Rest of the CSS remains unchanged ... */
 
 @keyframes blurFadeIn {
   0% {
@@ -103,7 +120,7 @@ body::before {
   width: 60%;
   max-width: 480px;
   opacity: 0;  
-  transition: opacity .2s; 
+  transition: opacity 1s; 
 }
 
 /* #contentWrapper {

@@ -134,61 +134,94 @@ function navigateToChoice(buttonElement) {
     blurOverlay.style.animation = "blurFadeIn 1s forwards";
   }
   const sceneLink = buttonElement.getAttribute("data-link");
+
+  resetUIAfterTransition(); // Resetting the UI
+
   loadScene(sceneLink, true);
 }
+function resetUIAfterTransition() {
+  document.getElementById("recordButton").innerText = "Record";
+  document.getElementById("transcriptResult").innerText = "Recording: ";
+  document.getElementById("accuracyResult").innerHTML =
+    "Accuracy:&nbsp;&nbsp;----"; // Use innerHTML here
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    button.style.border = "none";
+  });
+}
+
+// ... [The other functions remain unchanged]
+
+// ... [Other functions remain unchanged]
+let nextSceneImagesPreloaded = false; // New variable to track next scenes' image preload status
 
 function loadScene(sceneId, updateURL = false) {
   const contentWrapper = document.getElementById("contentWrapper");
 
-  // Step 1: Load the low-resolution image in the background.
-  const newLowQualityImage = new Image();
+  // Begin by fading out the current content
+  contentWrapper.classList.add("fadeOutAnimation");
+  contentWrapper.classList.remove("fadeInAnimation");
+  contentWrapper.style.opacity = "0"; // Hide the content during the transition
 
-  newLowQualityImage.onload = function () {
-    // Step 2: Apply the low-res image as the background and start fading out the old scene.
-    document.body.style.backgroundImage = `url(${newLowQualityImage.src})`;
-    contentWrapper.classList.add("fadeOutAnimation");
+  preloadImage(sceneId, "high")
+    .then((highResUrl) => {
+      // Replace the background image with the high-res image.
+      document.body.style.backgroundImage = `url(${highResUrl})`;
+      return fetch(`/get-scene?scene=${sceneId}`);
+    })
+    .then((response) => response.json())
+    .then((scene) => {
+      document.getElementById("sceneText").innerText = scene.text;
 
-    setTimeout(() => {
-      fetch(`/get-scene?scene=${sceneId}`)
-        .then((response) => response.json())
-        .then((scene) => {
-          document.getElementById("sceneText").innerText = scene.text;
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+      choiceButtons.forEach((button, index) => {
+        if (scene.choices && scene.choices[index]) {
+          button.innerText = scene.choices[index].text;
+          button.setAttribute("data-link", scene.choices[index].link);
+        } else {
+          button.style.display = "none"; // Hide any extra buttons that are not used in this scene
+        }
+      });
 
-          const choiceButtons = document.querySelectorAll(
-            "#choiceButtons button",
-          );
-          choiceButtons.forEach((button, index) => {
-            if (scene.choices && scene.choices[index]) {
-              button.innerText = scene.choices[index].text;
-              button.setAttribute("data-link", scene.choices[index].link);
-            }
-          });
+      // Reset the UI while the container is fully invisible
+      resetUIAfterTransition();
 
-          // Step 3: Start loading the high-resolution image.
-          const highQualityImage = new Image();
-          highQualityImage.onload = function () {
-            // Step 4: Replace the low-res image with the high-res image in the background.
-            document.body.style.backgroundImage = `url(${highQualityImage.src})`;
-          };
-          highQualityImage.src =
-            "https://storyscenes.blob.core.windows.net/background-normal/" +
-            sceneId +
-            ".jpg";
+      // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
+      setTimeout(() => {
+        contentWrapper.style.opacity = "1";
+        contentWrapper.classList.remove("fadeOutAnimation");
+        contentWrapper.classList.add("fadeInAnimation");
+      }, 500);
 
-          contentWrapper.classList.remove("fadeOutAnimation");
-          contentWrapper.classList.add("fadeInAnimation");
+      if (updateURL) {
+        history.pushState(null, "", `/?scene=${sceneId}`);
+      }
 
-          if (updateURL) {
-            history.pushState(null, "", `/?scene=${sceneId}`);
-          }
+      // Preload images for the next possible scenes
+      if (scene.choices) {
+        Promise.all(
+          scene.choices.map((choice) => preloadImage(choice.link, "high")),
+        ).then(() => {
+          nextSceneImagesPreloaded = true; // Update the status once all images are preloaded
         });
-    }, 500);
-  };
+      }
+    });
+}
+function preloadImage(sceneId, quality = "low") {
+  return new Promise((resolve, reject) => {
+    const imageUrl = `https://storyscenes.blob.core.windows.net/background-${
+      quality === "low" ? "small" : "normal"
+    }/${sceneId}.jpg`;
+    const image = new Image();
 
-  newLowQualityImage.src =
-    "https://storyscenes.blob.core.windows.net/background-small/" +
-    sceneId +
-    ".jpg";
+    image.onload = () => {
+      resolve(imageUrl);
+    };
+
+    image.onerror = reject;
+
+    image.src = imageUrl;
+  });
 }
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -200,11 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
   lowQualityImage.onload = function () {
     console.log("Low-quality image has finished loading!");
     document.body.style.display = "block";
-
-    setTimeout(function () {
-      const contentWrapper = document.getElementById("contentWrapper");
-      contentWrapper.style.opacity = "1";
-    }, 100);
+    document.getElementById("contentWrapper").style.opacity = "1"; // Show the content once low-res is loaded
 
     loadHighResImage();
   };
@@ -228,6 +257,13 @@ document.addEventListener("DOMContentLoaded", function () {
     highQualityImage.onload = function () {
       console.log("High-quality image has finished loading!");
       document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
+
+      // Here we preload images for the next possible scenes after the high-res image has loaded
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+      choiceButtons.forEach((button) => {
+        const nextSceneId = button.getAttribute("data-link");
+        preloadImage(nextSceneId, "high");
+      });
     };
 
     highQualityImage.onerror = function () {
@@ -400,6 +436,8 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       const sceneLink = button.getAttribute("data-link");
       loadScene(sceneLink, true);
+      // Preload images for the next scenes
+      preloadImage(sceneLink, "high");
     });
   });
 

@@ -23,6 +23,7 @@ function resetUIAfterTransition() {
 // ... [The other functions remain unchanged]
 
 // ... [Other functions remain unchanged]
+let nextSceneImagesPreloaded = false; // New variable to track next scenes' image preload status
 
 function loadScene(sceneId, updateURL = false) {
   const contentWrapper = document.getElementById("contentWrapper");
@@ -65,9 +66,17 @@ function loadScene(sceneId, updateURL = false) {
       if (updateURL) {
         history.pushState(null, "", `/?scene=${sceneId}`);
       }
+
+      // Preload images for the next possible scenes
+      if (scene.choices) {
+        Promise.all(
+          scene.choices.map((choice) => preloadImage(choice.link, "high")),
+        ).then(() => {
+          nextSceneImagesPreloaded = true; // Update the status once all images are preloaded
+        });
+      }
     });
 }
-
 function preloadImage(sceneId, quality = "low") {
   return new Promise((resolve, reject) => {
     const imageUrl = `https://storyscenes.blob.core.windows.net/background-${
@@ -86,6 +95,16 @@ function preloadImage(sceneId, quality = "low") {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  // Disable initial interactions
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    button.disabled = true;
+  });
+  document.getElementById("recordButton").disabled = true;
+
+  // Initially set contentWrapper opacity to 0
+  document.getElementById("contentWrapper").style.opacity = "0";
+
   // Create a new Image object to load the low-quality image.
   const lowQualityImage = new Image();
   console.log("Starting to load the low-quality image...");
@@ -94,7 +113,10 @@ document.addEventListener("DOMContentLoaded", function () {
   lowQualityImage.onload = function () {
     console.log("Low-quality image has finished loading!");
     document.body.style.display = "block";
-    document.getElementById("contentWrapper").style.opacity = "1"; // Show the content once low-res is loaded
+    // Fade in the contentWrapper
+    setTimeout(() => {
+      document.getElementById("contentWrapper").style.opacity = "1";
+    }, 100);
 
     loadHighResImage();
   };
@@ -118,6 +140,23 @@ document.addEventListener("DOMContentLoaded", function () {
     highQualityImage.onload = function () {
       console.log("High-quality image has finished loading!");
       document.body.style.backgroundImage = "url(" + highQualityImage.src + ")";
+
+      // Here we preload images for the next possible scenes after the high-res image has loaded
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+
+      // Ensure all images are preloaded before enabling interactions
+      Promise.all(
+        Array.from(choiceButtons).map((button) => {
+          const nextSceneId = button.getAttribute("data-link");
+          return preloadImage(nextSceneId, "high");
+        }),
+      ).then(() => {
+        // Enable interactions after all images have been preloaded
+        choiceButtons.forEach((button) => {
+          button.disabled = false;
+        });
+        document.getElementById("recordButton").disabled = false;
+      });
     };
 
     highQualityImage.onerror = function () {
