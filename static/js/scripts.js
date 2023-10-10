@@ -220,17 +220,16 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("keydown", function (event) {
-    // if (event.code === "Space") {
-    //   event.preventDefault(); // Prevent default behavior (i.e., scrolling)
-
-    if (event.code === "Space" && !isTransitioning && !isTranscribing) {
+    if (event.code === "Space") {
       event.preventDefault(); // Prevent default behavior (i.e., scrolling)
 
-      const recordButton = document.getElementById("recordButton");
-      if (recordButton.innerText === "Continue") {
-        navigateToHighlightedChoice();
-      } else {
-        toggleRecording();
+      if (!isTransitioning & !isTranscribing) {
+        const recordButton = document.getElementById("recordButton");
+        if (recordButton.innerText === "Continue") {
+          navigateToHighlightedChoice();
+        } else {
+          toggleRecording();
+        }
       }
     }
   });
