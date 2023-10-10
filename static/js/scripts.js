@@ -382,13 +382,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
-  // document.querySelectorAll("#choiceButtons button").forEach((button) => {
-  //   button.addEventListener("click", function (event) {
-  //     const sceneLink = button.getAttribute("data-link");
-  //     navigateToChoice(button, event); // Pass the event to the function
-  //     preloadImage(sceneLink, "high");
-  //   });
-  // });
+  document.querySelectorAll("#choiceButtons button").forEach((button) => {
+    button.addEventListener("click", function (event) {
+      const sceneLink = button.getAttribute("data-link");
+      navigateToChoice(button, event); // Pass the event to the function
+      preloadImage(sceneLink, "high");
+    });
+  });
 
   window.addEventListener("load", function () {
     setTimeout(function () {
