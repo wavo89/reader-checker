@@ -76,42 +76,46 @@ def transcribe_audio():
         if not converted_filename.exists():
             return jsonify({"error": "Converted audio file not found."})
 
+    try:
         with open(converted_filename, "rb") as f:
             response = openai.Audio.transcribe("whisper-1", f)
             transcribed_text = response["text"]
             print("Transcription completed:", transcribed_text)
+    except Exception as e:
+        print(f"Error during transcription: {e}")
+        transcribed_text = "Error"
 
-            # Preprocess the transcribed_text
-            transcribed_text = preprocess_text(transcribed_text)
+    # Preprocess the transcribed_text
+    transcribed_text = preprocess_text(transcribed_text)
 
-            # Compare the transcribed audio with each choice
-            accuracies = {}
-            for key in request.form.keys():
-                if key.startswith("choice_"):
-                    choice_text = request.form.get(key)
-                    accuracy = calculate_accuracy(choice_text, transcribed_text)
-                    accuracies[key] = accuracy
-                    print(
-                        f"Comparing with {choice_text}"
-                    )  # <-- This line prints the choice text
-                    print(f"Calculated Accuracy for {key}: {accuracy}")
+    # Compare the transcribed audio with each choice
+    accuracies = {}
+    for key in request.form.keys():
+        if key.startswith("choice_"):
+            choice_text = request.form.get(key)
+            accuracy = calculate_accuracy(choice_text, transcribed_text)
+            accuracies[key] = accuracy
+            print(
+                f"Comparing with {choice_text}"
+            )  # <-- This line prints the choice text
+            print(f"Calculated Accuracy for {key}: {accuracy}")
 
-            # Determine which choice is closer to the transcription
-            closest_choice = max(accuracies, key=accuracies.get)
-            closest_choice_accuracy = accuracies[closest_choice]
-            print(f"Closest Choice: {closest_choice}")
+    # Determine which choice is closer to the transcription
+    closest_choice = max(accuracies, key=accuracies.get)
+    closest_choice_accuracy = accuracies[closest_choice]
+    print(f"Closest Choice: {closest_choice}")
 
-            if not inspect_transcript(transcribed_text):
-                transcribed_text = "Error"
+    if not inspect_transcript(transcribed_text):
+        transcribed_text = "Error"
 
-            return jsonify(
-                {
-                    "transcript": transcribed_text,
-                    "accuracies": accuracies,
-                    "closest_choice_id": closest_choice,  # Return the ID of the button element
-                    "closest_choice_accuracy": closest_choice_accuracy,
-                }
-            )
+    return jsonify(
+        {
+            "transcript": transcribed_text,
+            "accuracies": accuracies,
+            "closest_choice_id": closest_choice,  # Return the ID of the button element
+            "closest_choice_accuracy": closest_choice_accuracy,
+        }
+    )
 
     return jsonify({"error": "No audio received."})
 
