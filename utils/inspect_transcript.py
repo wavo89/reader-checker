@@ -29,8 +29,10 @@ def inspect_transcript(transcript):
 
     # Check the response and return the appropriate value
     if gpt_response == "1":
+        print("Passes inspection: True")
         return True
     else:
+        print("Passes inspection: False")
         return False
 
 

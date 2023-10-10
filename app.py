@@ -101,7 +101,8 @@ def transcribe_audio():
             closest_choice_accuracy = accuracies[closest_choice]
             print(f"Closest Choice: {closest_choice}")
 
-            gpt_check = inspect_transcript(transcribed_text)
+            if not inspect_transcript(transcribed_text):
+                transcribed_text = "Error"
 
             return jsonify(
                 {
