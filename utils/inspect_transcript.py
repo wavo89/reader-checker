@@ -15,12 +15,14 @@ def inspect_transcript(transcript):
     )
 
     # Extract the GPT-3.5 response
-    gpt_response = response["choices"][0]["message"]["content"].strip().lower()
+    gpt_response = response["choices"][0]["message"]["content"]
+    print("GPT response:", gpt_response)
+    # gpt_response = response["choices"][0]["message"]["content"].strip().lower()
 
     # Check the response and return the appropriate value
-    if "yes" in gpt_response or "inappropriate" in gpt_response:
-        print("GPT response: 0")
-        return 0
-    else:
-        print("GPT response: 1")
-        return 1
+    # if "yes" in gpt_response or "inappropriate" in gpt_response:
+    #     print("GPT response: 0")
+    #     return 0
+    # else:
+    #     print("GPT response: 1")
+    #     return 1
