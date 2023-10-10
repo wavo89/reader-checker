@@ -7,7 +7,7 @@ def inspect_transcript(transcript):
     Returns 0 if any inappropriate content is found, otherwise returns 1.
     """
     # Create a prompt for GPT-3.5
-    prompt = f"Review this text for any inappropriate or innuendo content: '{transcript}'. Is it inappropriate?"
+    prompt = f"Review this text for any inappropriate or innuendo content: '{transcript}'. If nothing inappropriate is found, please respond with only a 1. If anything inappropriate is found, respond with a 0. Do not respond with anything else besides a 0 or 1 even if its very inappropriate."
 
     # Use openai.ChatCompletion (as shown in the example) to get a response from GPT-3.5
     response = openai.ChatCompletion.create(
