@@ -6,6 +6,8 @@ import pathlib
 from utils.calculate_accuracy import calculate_accuracy, preprocess_text
 import json
 
+from utils.inspect_transcript import inspect_transcript
+
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -98,6 +100,8 @@ def transcribe_audio():
             closest_choice = max(accuracies, key=accuracies.get)
             closest_choice_accuracy = accuracies[closest_choice]
             print(f"Closest Choice: {closest_choice}")
+
+            gpt_check = inspect_transcript(transcribed_text)
 
             return jsonify(
                 {
