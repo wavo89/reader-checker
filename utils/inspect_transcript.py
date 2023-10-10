@@ -11,8 +11,8 @@ def inspect_transcript(transcript):
     """
     # Check for bad words using the better_profanity library
     contains_bad_word = profanity.contains_profanity(transcript)
+    print("Contains bad word?:", contains_bad_word)
     if contains_bad_word:
-        print("Profanity Check: Contains bad word.")
         return False
 
     # Create a prompt for GPT-3.5
