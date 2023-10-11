@@ -105,6 +105,24 @@ body::before {
 
 }
 
+#loginArea {
+  margin: 20px 0;
+}
+
+#loginUsername, #loginPassword {
+  padding: 10px;
+  margin: 5px;
+}
+
+#userDisplay {
+  color: #f2f2f2;  /* Light gray close to white */
+  font-size: 18px; /* Adjust this value to your liking */
+  font-weight: bold; /* Makes the text bold */
+  padding: 10px; /* Add some spacing around the text */
+  background-color: rgba(0, 0, 0, 0.6); /* Optional: Adds a semi-transparent black background for better readability */
+  border-radius: 5px; /* Optional: Rounds the corners of the background */
+}
+
 @keyframes blurFadeOut {
   0% {
     backdrop-filter: blur(10px);

@@ -31,7 +31,16 @@
         <p id="accuracyResult">Accuracy:&nbsp;&nbsp;----</p>
         <!-- Removed the inline onclick event -->
         <button id="recordButton">Record</button>
+    <p id="userDisplay" style="display: none;"></p> <!-- Display the username here after successful login -->
+
     </div>
+    <div id="loginArea">
+        <input type="text" id="loginUsername" placeholder="Username">
+        <input type="password" id="loginPassword" placeholder="Password">
+        <button onclick="loginUser()">Login</button>
+        <p id="loginError" style="color: red; display: none;"></p> <!-- Error message will be shown here -->
+    </div>
+    
     <script src="static/js/scripts.js"></script>
 </body>
 </html>

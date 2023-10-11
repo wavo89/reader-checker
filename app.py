@@ -7,9 +7,13 @@ from utils.calculate_accuracy import calculate_accuracy, preprocess_text
 import json
 
 from utils.inspect_transcript import inspect_transcript
+from supabase_py import create_client
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
+SUPABASE_URL = os.environ.get("SUPABASE_URL")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
 @app.route("/")
@@ -19,6 +23,46 @@ def index():
         scenes = json.load(f)
         scene = scenes.get(scene_id, scenes["hex1"])
     return render_template("index.html", scene=scene, scene_id=scene_id)
+
+
+@app.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    username = data.get("username")
+    provided_password = data.get("password")
+
+    # Updated the syntax here:
+    print("login with username: ", username, " ", provided_password)
+    response = (
+        supabase.table("user")
+        .select("password")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+    # response = supabase.table("account").select("*").execute()
+
+    print("Full response:", response)
+    data = response.get("data", [])
+    print("data: ", data)
+    error = response.get("error", None)
+
+    if error:
+        print(error)
+        return jsonify(success=False, error=str(error))
+
+    if data and "password" in data[0]:
+        stored_password = data[0].get("password")
+    else:
+        return jsonify(success=False, error="User not found")
+
+    print("provided pw: ", provided_password)
+    print("stored pw: ", stored_password)
+
+    if provided_password == stored_password:
+        return jsonify(success=True)
+    else:
+        return jsonify(success=False, error="That combination doesn't work. Try again.")
 
 
 @app.route("/get-scene")

@@ -21,6 +21,36 @@ history.pushState = function () {
   return originalPushState.apply(history, arguments);
 };
 
+// ... [your existing code]
+
+function loginUser() {
+  const username = document.getElementById("loginUsername").value;
+  const password = document.getElementById("loginPassword").value;
+  fetch("/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ username, password }),
+  })
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        const loginArea = document.getElementById("loginArea");
+        loginArea.style.display = "none";
+        const userDisplay = document.getElementById("userDisplay");
+        userDisplay.innerHTML = `User: ${username}`;
+        userDisplay.style.display = "block";
+      } else {
+        const errorMessage = document.getElementById("loginError");
+        errorMessage.innerText = data.error;
+        errorMessage.style.display = "block";
+      }
+    });
+}
+
+// ... [rest of your existing code]
+
 function navigateToChoice(buttonElement) {
   console.log("navigateToChoice called");
   console.log("Event target:", event.target);
