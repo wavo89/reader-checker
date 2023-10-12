@@ -1,4 +1,5 @@
 let isTransitioning = false;
+let allowClick = true; // Default to true
 
 // let isFirstLoad = true;
 window.addEventListener("popstate", function (event) {
@@ -21,7 +22,27 @@ history.pushState = function () {
   return originalPushState.apply(history, arguments);
 };
 
-// ... [your existing code]
+function checkAllowClick(username) {
+  // If the user is not logged in, set allow_click to true and exit early.
+  if (!username) {
+    console.log("Allow Click Status: true (not logged in)");
+    return Promise.resolve(true); // Resolve immediately with true.
+  }
+
+  // Otherwise, proceed with the existing logic for logged-in users.
+  return fetch(`/check-allow-click?username=${username}`)
+    .then((response) => response.json())
+    .then((data) => {
+      if (data.success) {
+        console.log("Allow Click Status:", data.allow_click);
+        allowClick = data.allow_click; // Update the global variable
+        return data.allow_click;
+      } else {
+        console.error(data.error);
+        return null;
+      }
+    });
+}
 
 function loginUser() {
   const username = document.getElementById("loginUsername").value;
@@ -46,6 +67,7 @@ function loginUser() {
           .addEventListener("click", logoutUser);
         localStorage.setItem("loggedIn", "true"); // Save login status to local storage
         localStorage.setItem("username", username); // Save username to local storage
+        checkAllowClick(username); // Check allow_click status after login
       } else {
         const errorMessage = document.getElementById("loginError");
         errorMessage.innerText = data.error;
@@ -102,6 +124,16 @@ function loadScene(sceneId, updateURL = false) {
   contentWrapper.classList.add("fadeOutAnimation");
   contentWrapper.classList.remove("fadeInAnimation");
   contentWrapper.style.opacity = "0"; // Hide the content during the transition
+  const username = localStorage.getItem("username");
+  if (username) {
+    checkAllowClick(username).then((allowClick) => {
+      // Enable or disable the choice buttons based on allow_click status
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+      choiceButtons.forEach((button) => {
+        button.disabled = !allowClick;
+      });
+    });
+  }
 
   preloadImage(sceneId, "high")
     .then((highResUrl) => {
@@ -135,7 +167,7 @@ function loadScene(sceneId, updateURL = false) {
         contentWrapper.classList.remove("fadeOutAnimation");
         contentWrapper.classList.add("fadeInAnimation");
         choiceButtons.forEach((button) => {
-          button.disabled = false;
+          button.disabled = !allowClick; // Use the global allowClick variable here
         });
         document.getElementById("recordButton").disabled = false;
 
@@ -176,6 +208,8 @@ function preloadImage(sceneId, quality = "low") {
 
 function logoutUser() {
   localStorage.removeItem("loggedIn"); // Remove login status from local storage
+  localStorage.removeItem("username"); // Remove login status from local storage
+
   const userDisplay = document.getElementById("userDisplay");
   userDisplay.style.display = "none";
   const loginArea = document.getElementById("loginArea");
@@ -183,6 +217,15 @@ function logoutUser() {
 }
 
 document.addEventListener("DOMContentLoaded", function () {
+  const username = localStorage.getItem("username"); // Get username from local storage
+  if (username) {
+    checkAllowClick(username).then((allowClick) => {
+      console.log("Initial allow_click status:", allowClick);
+    });
+  } else {
+    console.log("Initial allow_click status: true (not logged in)");
+  }
+
   const loginForm = document.getElementById("loginForm");
 
   loginForm.addEventListener("submit", function (event) {
@@ -264,18 +307,30 @@ document.addEventListener("DOMContentLoaded", function () {
       const choiceButtons = document.querySelectorAll("#choiceButtons button");
 
       // Ensure all images are preloaded before enabling interactions
+      // Ensure all images are preloaded before enabling interactions
       Promise.all(
         Array.from(choiceButtons).map((button) => {
           const nextSceneId = button.getAttribute("data-link");
           return preloadImage(nextSceneId, "high");
         }),
       ).then(() => {
-        // Enable interactions after all images have been preloaded
-        choiceButtons.forEach((button) => {
-          button.disabled = false;
-        });
-        document.getElementById("recordButton").disabled = false;
-        isTransitioning = false; // Set this flag to false here, after the preloading is done
+        if (username) {
+          checkAllowClick(username).then((allowClick) => {
+            // Enable or disable the choice buttons based on allow_click status
+            choiceButtons.forEach((button) => {
+              button.disabled = !allowClick;
+            });
+            document.getElementById("recordButton").disabled = false;
+            isTransitioning = false; // Set this flag to false here, after the preloading is done
+          });
+        } else {
+          // If not logged in, enable interactions as usual
+          choiceButtons.forEach((button) => {
+            button.disabled = false;
+          });
+          document.getElementById("recordButton").disabled = false;
+          isTransitioning = false; // Set this flag to false here, after the preloading is done
+        }
       });
     };
 
