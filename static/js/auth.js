@@ -17,7 +17,7 @@ document.getElementById("signInButton").addEventListener("click", async () => {
       if (data.success) {
         alert("Logged in successfully!");
         loginErrorElement.textContent = ""; // Clear any error messages
-        loggedInUserElement.textContent = `User: ${username}`; // Display the username
+        loggedInUserElement.textContent = `${username}`; // Display the username
         // Additional logic for successful login can be added here if needed
       } else {
         loginErrorElement.textContent =

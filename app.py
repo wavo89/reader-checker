@@ -32,15 +32,14 @@ def login():
     provided_password = data.get("password")
 
     # Updated the syntax here:
-    print("login with username: ", username, " ", provided_password)
+    print(f"login with username: {username} {provided_password}")
     response = (
         supabase.table("user")
-        .select("password")
+        .select("password, allow_click")
         .eq("username", username)
         .limit(1)
         .execute()
     )
-    # response = supabase.table("account").select("*").execute()
 
     print("Full response:", response)
     data = response.get("data", [])
@@ -53,16 +52,44 @@ def login():
 
     if data and "password" in data[0]:
         stored_password = data[0].get("password")
+        allow_click = data[0].get("allow_click", False)  # Default to False if not found
     else:
-        return jsonify(success=False, error="User not found")
+        return jsonify(success=False, error="User not found.")
 
     print("provided pw: ", provided_password)
     print("stored pw: ", stored_password)
 
     if provided_password == stored_password:
-        return jsonify(success=True)
+        return jsonify(success=True, allow_click=allow_click)
     else:
         return jsonify(success=False, error="That combination doesn't work. Try again.")
+
+
+@app.route("/check-allow-click", methods=["GET"])
+def check_allow_click():
+    username = request.args.get("username")
+    if not username:
+        return jsonify(success=False, error="Username not provided.")
+
+    response = (
+        supabase.table("user")
+        .select("allow_click")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+
+    data = response.get("data", [])
+    error = response.get("error", None)
+
+    if error:
+        return jsonify(success=False, error=str(error))
+
+    if data:
+        allow_click = data[0].get("allow_click", False)  # Default to False if not found
+        return jsonify(success=True, allow_click=allow_click)
+    else:
+        return jsonify(success=False, error="User not found.")
 
 
 @app.route("/get-scene")

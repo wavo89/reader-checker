@@ -36,7 +36,7 @@ if __name__ == "__main__":
     ]
 
     # Output filename
-    output_file = "combined_files.txt"
+    output_file = "sum_back.txt"
 
     all_found_files = []
 

@@ -1,3 +1,4 @@
+===== static/js/scripts.js =====
 let isTransitioning = false;
 
 // let isFirstLoad = true;
@@ -39,13 +40,8 @@ function loginUser() {
         const loginArea = document.getElementById("loginArea");
         loginArea.style.display = "none";
         const userDisplay = document.getElementById("userDisplay");
-        userDisplay.innerHTML = `${username}<span id="logoutLink" style="cursor:pointer;"> | logout</span>`;
+        userDisplay.innerHTML = `User: ${username}`;
         userDisplay.style.display = "block";
-        document
-          .getElementById("logoutLink")
-          .addEventListener("click", logoutUser);
-        localStorage.setItem("loggedIn", "true"); // Save login status to local storage
-        localStorage.setItem("username", username); // Save username to local storage
       } else {
         const errorMessage = document.getElementById("loginError");
         errorMessage.innerText = data.error;
@@ -53,6 +49,8 @@ function loginUser() {
       }
     });
 }
+
+// ... [rest of your existing code]
 
 function navigateToChoice(buttonElement) {
   console.log("navigateToChoice called");
@@ -86,8 +84,6 @@ let nextSceneImagesPreloaded = false; // New variable to track next scenes' imag
 
 function loadScene(sceneId, updateURL = false) {
   console.log("loadScene called with:", sceneId, "updateURL:", updateURL);
-  // const userDisplay = document.getElementById("userDisplay");
-  // userDisplay.classList.add("noAnimation"); // Disable animations
 
   isTransitioning = true; // Set to true when starting to load a scene
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
@@ -174,44 +170,7 @@ function preloadImage(sceneId, quality = "low") {
   });
 }
 
-function logoutUser() {
-  localStorage.removeItem("loggedIn"); // Remove login status from local storage
-  const userDisplay = document.getElementById("userDisplay");
-  userDisplay.style.display = "none";
-  const loginArea = document.getElementById("loginArea");
-  loginArea.style.display = "block";
-}
-
 document.addEventListener("DOMContentLoaded", function () {
-  const loginForm = document.getElementById("loginForm");
-
-  loginForm.addEventListener("submit", function (event) {
-    event.preventDefault(); // Prevent the form from submitting the traditional way
-    loginUser(); // Call your loginUser function
-  });
-
-  const isLoggedIn = localStorage.getItem("loggedIn") === "true"; // Get login state from local storage
-  if (isLoggedIn) {
-    const loginArea = document.getElementById("loginArea");
-    loginArea.style.display = "none";
-    const userDisplay = document.getElementById("userDisplay");
-    const username = localStorage.getItem("username"); // Get username from local storage
-    userDisplay.innerHTML = `${username}<a href="#" id="logoutLink"> | logout</a>`;
-    userDisplay.style.display = "block";
-  }
-
-  document.addEventListener("click", function (event) {
-    if (event.target.id === "logoutLink") {
-      event.preventDefault();
-      localStorage.removeItem("loggedIn"); // Clear login state from local storage
-      localStorage.removeItem("username"); // Clear username from local storage
-      const userDisplay = document.getElementById("userDisplay");
-      userDisplay.style.display = "none";
-      const loginArea = document.getElementById("loginArea");
-      loginArea.style.display = "block";
-    }
-  });
-
   // Disable initial interactions
   isTransitioning = true; // Set this flag to true at the start
 
@@ -476,20 +435,69 @@ document.addEventListener("DOMContentLoaded", function () {
     if (accuracy === 2) return "🟡";
     return "🔴";
   }
-
-  const loginUsername = document.getElementById("loginUsername");
-  const loginPassword = document.getElementById("loginPassword");
-
-  // Define a function to handle the keydown event
-  // function handleKeydown(event) {
-  //   // Check if the Enter akey was pressed
-  //   if (event.key === "Enter" || event.keyCode === 13) {
-  //     event.preventDefault(); // Prevent the default action to stop it from submitting the form in a traditional way
-  //     loginUser(); // Call your loginUser function
-  //   }
-  // }
-
-  // Add the keydown event listener to both input fields
-  loginUsername.addEventListener("keydown", handleKeydown);
-  loginPassword.addEventListener("keydown", handleKeydown);
 }); // End of DOMContentLoaded
+
+
+===== templates/index.html =====
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Story Game Online</title>
+    <link rel="stylesheet" href="static/css/styles.css">
+    <style>
+        body {
+            background-image: url('https://storyscenes.blob.core.windows.net/background-small/{{ scene_id }}.jpg');
+        }
+    </style>
+</head>
+<body>
+    <div id="blurOverlay"></div> <!-- Here's the blur overlay div -->
+
+    <!-- Hidden div to store scene_id for JavaScript to access -->
+    <div id="sceneId" data-scene-id="{{ scene_id }}" style="display: none;"></div>
+
+    <div id="contentWrapper">
+        <p id="sceneText">{{ scene.text }}</p>
+        <div id="choiceButtons">
+            {% for choice in scene.choices %}
+            <!-- Removed the inline onclick event -->
+            <button id="choice_{{ loop.index }}" data-link="{{ choice.link }}">
+                {{ choice.text }}
+            </button>
+            {% endfor %}
+        </div>
+        <p id="transcriptResult">Recording: </p>
+        <p id="accuracyResult">Accuracy:&nbsp;&nbsp;----</p>
+        <!-- Removed the inline onclick event -->
+        <button id="recordButton">Record</button>
+    <p id="userDisplay" style="display: none;"></p> <!-- Display the username here after successful login -->
+
+    </div>
+<!-- templates/index.html -->
+
+<!-- ... [rest of the code] -->
+
+<!-- ... [rest of your HTML] ... -->
+
+<!-- ... [rest of your HTML] ... -->
+
+<div id="loginArea">
+    <input type="text" id="loginUsername" placeholder="username">
+    <input type="password" id="loginPassword" placeholder="password">
+    <button id="loginButton" onclick="loginUser()">Login</button>
+    <p id="loginError" style="color: red; display: none;"></p> <!-- Error message will be shown here -->
+</div>
+
+<!-- ... [rest of your HTML] ... -->
+
+<!-- ... [rest of your HTML] ... -->
+
+<!-- ... [rest of the code] -->
+    
+    <script src="static/js/scripts.js"></script>
+</body>
+</html>
+
+
