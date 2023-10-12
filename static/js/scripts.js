@@ -390,10 +390,10 @@ document.addEventListener("DOMContentLoaded", function () {
       updateUIForRecording();
       recordingTimer = setTimeout(() => {
         if (isRecording) {
-          alert("Reached 25 seconds limit! Stopping recording.");
+          alert("Reached 15 seconds limit! Stopping recording.");
           cancelRecording();
         }
-      }, 25000);
+      }, 15000);
     });
   }
 
