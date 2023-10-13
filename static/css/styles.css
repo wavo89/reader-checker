@@ -19,6 +19,16 @@ body {
 }
 
 
+.eye-icon {
+  background-image: url('/static/images/eye.png');
+  background-size: cover;
+  width: 20px;  /* Adjust width and height to match the dimensions of your icon */
+  height: 20px;
+  display: inline-block;
+  margin-left: 10px;  /* Adds some space between the button and the icon */
+}
+
+
 @keyframes fadeInHalf {
   from {
     opacity: 0;
@@ -272,6 +282,7 @@ button:hover {
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
+  /* max-width: 450px; */
 }
 
 #choiceButtons button {

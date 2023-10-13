@@ -1,5 +1,67 @@
 let isTransitioning = false;
 let allowClick = true; // Default to true
+let choiceScenesViewed = {};
+// let choiceScenesViewed = { hex2: true, hex3: false };
+
+// Assuming choice_viewed_status is the name of your object
+// let choice_viewed_status = {'hex2': True, 'hex3': False};
+
+// Function to add eye icon
+function removeEyeIcon() {
+  // Get all eye icons
+  let eyeIcons = document.querySelectorAll(".eye-icon");
+
+  // Iterate through each eye icon
+  eyeIcons.forEach((icon) => {
+    // Get data-link value from the parent button
+    let linkValue = icon.previousSibling.getAttribute("data-link");
+
+    // Check choiceScenesViewed for corresponding value
+    if (!choiceScenesViewed[linkValue]) {
+      // Hide eye icon element if the scene has not been viewed
+      icon.style.display = "none";
+    }
+  });
+}
+
+function setEyeIcon() {
+  // Get all choice buttons
+  let choiceButtons = document.querySelectorAll("[data-link]");
+
+  // Iterate through each button
+  choiceButtons.forEach((button) => {
+    // Get data-link value
+    let linkValue = button.getAttribute("data-link");
+
+    // Find the existing eye icon, if any, using a querySelector
+    let existingEyeIcon = button.parentNode.querySelector(".eye-icon");
+
+    console.log(`Processing button with linkValue: ${linkValue}`);
+    console.log(`Existing eye icon: ${existingEyeIcon}`);
+
+    // Check choiceScenesViewed for corresponding value
+    if (choiceScenesViewed[linkValue]) {
+      console.log(`Scene ${linkValue} has been viewed.`);
+      // If the eye icon doesn't exist, create and append it
+      if (!existingEyeIcon) {
+        console.log(`Creating new eye icon for ${linkValue}`);
+        let eyeIcon = document.createElement("span");
+        eyeIcon.className = "eye-icon";
+        button.parentNode.insertBefore(eyeIcon, button.nextSibling);
+      }
+    } else {
+      console.log(`Scene ${linkValue} has not been viewed.`);
+      // If the eye icon exists and the scene hasn't been viewed, remove it
+      if (existingEyeIcon) {
+        console.log(`Removing eye icon for ${linkValue}`);
+        existingEyeIcon.remove();
+      }
+    }
+  });
+}
+
+// Call the function to add eye icons
+setEyeIcon();
 
 // let isFirstLoad = true;
 window.addEventListener("popstate", function (event) {
@@ -106,10 +168,51 @@ function resetUIAfterTransition() {
 // ... [Other functions remain unchanged]
 let nextSceneImagesPreloaded = false; // New variable to track next scenes' image preload status
 
-function loadScene(sceneId, updateURL = false) {
+// New function to handle checking viewed scenes
+function checkViewedScenes(scene, username, callback) {
+  if (scene.choices) {
+    if (!username) {
+      // Handle not logged in scenario (e.g., show login prompt)
+      console.log("No viewed choice, user not logged in");
+      callback(null); // Call the callback with null to indicate an error or no data
+      return;
+    }
+    const choice_scene_ids = scene.choices.map((choice) => choice.link);
+    fetch("/check-viewed-scenes", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username,
+        choice_scene_ids,
+      }),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("checkChoiceView: ", data);
+        choiceScenesViewed = data.choice_viewed_status; // Store the data globally
+        callback(data.choice_viewed_status); // Call the callback with the data
+      })
+      .catch((error) => {
+        console.error(
+          "There has been a problem with your fetch operation:",
+          error,
+        );
+        callback(null); // Call the callback with null to indicate an error
+      });
+  } else {
+    callback(null); // Call the callback with null if there are no choices
+  }
+}
+
+async function loadScene(sceneId, updateURL = false) {
   console.log("loadScene called with:", sceneId, "updateURL:", updateURL);
-  // const userDisplay = document.getElementById("userDisplay");
-  // userDisplay.classList.add("noAnimation"); // Disable animations
 
   isTransitioning = true; // Set to true when starting to load a scene
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
@@ -124,69 +227,81 @@ function loadScene(sceneId, updateURL = false) {
   contentWrapper.classList.add("fadeOutAnimation");
   contentWrapper.classList.remove("fadeInAnimation");
   contentWrapper.style.opacity = "0"; // Hide the content during the transition
+
   const username = localStorage.getItem("username");
+  let allowClick = false;
   if (username) {
-    checkAllowClick(username).then((allowClick) => {
-      // Enable or disable the choice buttons based on allow_click status
-      const choiceButtons = document.querySelectorAll("#choiceButtons button");
-      choiceButtons.forEach((button) => {
-        button.disabled = !allowClick;
-      });
+    allowClick = await checkAllowClick(username);
+    // Enable or disable the choice buttons based on allow_click status
+    choiceButtons.forEach((button) => {
+      button.disabled = !allowClick;
     });
   }
 
-  preloadImage(sceneId, "high")
-    .then((highResUrl) => {
-      // Replace the background image with the high-res image.
-      document.body.style.backgroundImage = `url(${highResUrl})`;
-      return fetch(`/get-scene?scene=${sceneId}`);
-    })
-    .then((response) => response.json())
-    .then((scene) => {
+  try {
+    const highResUrl = await preloadImage(sceneId, "high");
+    // Replace the background image with the high-res image.
+    document.body.style.backgroundImage = `url(${highResUrl})`;
+    const response = await fetch(`/get-scene?scene=${sceneId}`);
+    const scene = await response.json();
+
+    checkViewedScenes(scene, username, function (viewedStatus) {
+      // This code will run after checkViewedScenes has finished
+      if (viewedStatus !== null) {
+        // If viewedStatus is not null, it means checkViewedScenes succeeded
+        setEyeIcon();
+      }
+      // ... (any other code you want to run after checkViewedScenes)
+
       // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
       setTimeout(() => {
-        // Update scene text and choices text here
-        document.getElementById("sceneText").innerText = scene.text;
-
-        const choiceButtons = document.querySelectorAll(
-          "#choiceButtons button",
-        );
-        choiceButtons.forEach((button, index) => {
-          if (scene.choices && scene.choices[index]) {
-            button.innerText = scene.choices[index].text;
-            button.setAttribute("data-link", scene.choices[index].link);
-          } else {
-            button.style.display = "none"; // Hide any extra buttons that are not used in this scene
-          }
-        });
-
-        // Reset the UI while the container is fully invisible
-        resetUIAfterTransition();
-
-        contentWrapper.style.opacity = "1";
-        contentWrapper.classList.remove("fadeOutAnimation");
-        contentWrapper.classList.add("fadeInAnimation");
-        choiceButtons.forEach((button) => {
-          button.disabled = !allowClick; // Use the global allowClick variable here
-        });
-        document.getElementById("recordButton").disabled = false;
-
-        isTransitioning = false; // Set to false after the fade-in transition
+        // ... (rest of your code remains unchanged)
       }, 500);
-
-      if (updateURL) {
-        history.pushState(null, "", `/?scene=${sceneId}`);
-      }
-
-      // Preload images for the next possible scenes
-      if (scene.choices) {
-        Promise.all(
-          scene.choices.map((choice) => preloadImage(choice.link, "high")),
-        ).then(() => {
-          nextSceneImagesPreloaded = true; // Update the status once all images are preloaded
-        });
-      }
     });
+
+    // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
+    setTimeout(() => {
+      // Update scene text and choices text here
+
+      document.getElementById("sceneText").innerText = scene.text;
+      const choiceButtons = document.querySelectorAll("#choiceButtons button");
+      choiceButtons.forEach((button, index) => {
+        if (scene.choices && scene.choices[index]) {
+          button.innerText = scene.choices[index].text;
+          button.setAttribute("data-link", scene.choices[index].link);
+        } else {
+          button.style.display = "none"; // Hide any extra buttons that are not used in this scene
+        }
+      });
+
+      // Reset the UI while the container is fully invisible
+      resetUIAfterTransition();
+
+      contentWrapper.style.opacity = "1";
+      contentWrapper.classList.remove("fadeOutAnimation");
+      contentWrapper.classList.add("fadeInAnimation");
+      choiceButtons.forEach((button) => {
+        button.disabled = !allowClick; // Use the global allowClick variable here
+      });
+      document.getElementById("recordButton").disabled = false;
+
+      isTransitioning = false; // Set to false after the fade-in transition
+    }, 500);
+
+    if (updateURL) {
+      history.pushState(null, "", `/?scene=${sceneId}`);
+    }
+
+    // Preload images for the next possible scenes
+    if (scene.choices) {
+      await Promise.all(
+        scene.choices.map((choice) => preloadImage(choice.link, "high")),
+      );
+      nextSceneImagesPreloaded = true; // Update the status once all images are preloaded
+    }
+  } catch (error) {
+    console.error("Error loading scene:", error);
+  }
 }
 
 function preloadImage(sceneId, quality = "low") {

@@ -1,4 +1,12 @@
-from flask import Flask, request, jsonify, render_template, send_from_directory
+from flask import (
+    Flask,
+    request,
+    jsonify,
+    render_template,
+    send_from_directory,
+    redirect,
+    url_for,
+)
 import openai
 import os
 import subprocess
@@ -19,10 +27,94 @@ supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 @app.route("/")
 def index():
     scene_id = request.args.get("scene", "hex1")
+    if "scene" not in request.args:
+        return redirect(url_for("index", scene=scene_id))
     with open("scenes/scenes.json", "r") as f:
         scenes = json.load(f)
         scene = scenes.get(scene_id, scenes["hex1"])
     return render_template("index.html", scene=scene, scene_id=scene_id)
+
+
+@app.route("/update-viewed-scenes", methods=["POST"])
+def update_viewed_scenes():
+    username = request.form.get("username")
+    scene_id = request.form.get("scene_id")
+
+    # Fetch the current viewed_scenes array for the user
+    response = (
+        supabase.table("user")
+        .select("viewed_scenes")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+    data = response.get("data", [])
+    error = response.get("error", None)
+
+    if error:
+        return jsonify(success=False, error=str(error))
+
+    if data:
+        viewed_scenes = data[0].get("viewed_scenes", [])
+    else:
+        return jsonify(success=False, error="User not found.")
+
+    # Update the viewed_scenes array if the scene_id is not already in it
+    if scene_id not in viewed_scenes:
+        viewed_scenes.append(scene_id)
+        response = (
+            supabase.table("user")
+            .update({"viewed_scenes": viewed_scenes})
+            .eq("username", username)
+            .execute()
+        )
+        error = response.get("error", None)
+        if error:
+            return jsonify(success=False, error=str(error))
+
+    return jsonify(success=True)
+
+
+@app.route("/check-viewed-scenes", methods=["POST"])
+def check_viewed_scenes():
+    print("check viewed")
+    # Get username and choice_scene_ids from JSON body instead of form data
+    request_data = request.get_json()
+    username = request_data.get("username")
+    choice_scene_ids = request_data.get("choice_scene_ids", [])
+
+    if not username:
+        return jsonify(success=False, error="Username is required.")
+
+    print("username: ", username)
+    print("choice scene ids: ", choice_scene_ids)
+    # Fetch the viewed_scenes array for the user
+    response = (
+        supabase.table("user")
+        .select("viewed_scenes")
+        .eq("username", username)
+        .limit(1)
+        .execute()
+    )
+    data = response.get("data", [])
+    error = response.get("error", None)
+
+    if error:
+        return jsonify(success=False, error=str(error))
+
+    if data:
+        viewed_scenes = data[0].get("viewed_scenes", [])
+    else:
+        return jsonify(success=False, error="User not found.")
+
+    # Check if the choice scenes have been viewed
+    choice_viewed_status = {
+        scene_id: scene_id in viewed_scenes for scene_id in choice_scene_ids
+    }
+
+    print(choice_viewed_status)
+
+    return jsonify(success=True, choice_viewed_status=choice_viewed_status)
 
 
 @app.route("/login", methods=["POST"])
@@ -90,6 +182,47 @@ def check_allow_click():
         return jsonify(success=True, allow_click=allow_click)
     else:
         return jsonify(success=False, error="User not found.")
+
+
+@app.route("/toggle-allow-click", methods=["GET"])
+def toggle_allow_click():
+    # Get the value of the 'allow' parameter from the URL query string
+    allow = request.args.get("allow", "false").lower() == "true"
+
+    print(f"Allow: {allow}")  # Log the allow value
+    # Fetch all ids from the 'user' table
+    response = supabase.table("user").select("id").execute()
+    ids = [
+        item["id"] for item in response.get("data", [])
+    ]  # Extract ids from response data
+    print(f"User IDs: {ids}")  # Log the user IDs
+
+    # Check for any errors in the response
+    error = response.get("error", None)
+    if error:
+        print(f"Error fetching user IDs: {error}")  # Log any error fetching user IDs
+        return jsonify(success=False, error=str(error))
+
+    # If no errors, loop through each id and update the 'allow_click' field
+    for user_id in ids:
+        response = (
+            supabase.table("user")
+            .update({"allow_click": allow})
+            .eq("id", user_id)
+            .execute()
+        )
+        error = response.get("error", None)
+        print(response)
+        if error:
+            print(
+                f"Error updating user {user_id}: {error}"
+            )  # Log any error updating a user
+            return jsonify(
+                success=False, error=str(error)
+            )  # Return error if any update fails
+
+    # If all updates succeed, return a success response
+    return jsonify(success=True, message="Updated allow_click for all users.")
 
 
 @app.route("/get-scene")
