@@ -2,68 +2,8 @@ let isTransitioning = false;
 let allowClick = true; // Default to true
 let choiceScenesViewed = {};
 // let choiceScenesViewed = { hex2: true, hex3: false };
-
-// Assuming choice_viewed_status is the name of your object
-// let choice_viewed_status = {'hex2': True, 'hex3': False};
-
-// Function to add eye icon
-function removeEyeIcon() {
-  // Get all eye icons
-  let eyeIcons = document.querySelectorAll(".eye-icon");
-
-  // Iterate through each eye icon
-  eyeIcons.forEach((icon) => {
-    // Get data-link value from the parent button
-    let linkValue = icon.previousSibling.getAttribute("data-link");
-
-    // Check choiceScenesViewed for corresponding value
-    if (!choiceScenesViewed[linkValue]) {
-      // Hide eye icon element if the scene has not been viewed
-      icon.style.display = "none";
-    }
-  });
-}
-
-function setEyeIcon() {
-  // Get all choice buttons
-  let choiceButtons = document.querySelectorAll("[data-link]");
-
-  // Iterate through each button
-  choiceButtons.forEach((button) => {
-    // Get data-link value
-    let linkValue = button.getAttribute("data-link");
-
-    // Find the existing eye icon, if any, using a querySelector
-    let existingEyeIcon = button.parentNode.querySelector(".eye-icon");
-
-    console.log(`Processing button with linkValue: ${linkValue}`);
-    console.log(`Existing eye icon: ${existingEyeIcon}`);
-
-    // Check choiceScenesViewed for corresponding value
-    if (choiceScenesViewed[linkValue]) {
-      console.log(`Scene ${linkValue} has been viewed.`);
-      // If the eye icon doesn't exist, create and append it
-      if (!existingEyeIcon) {
-        console.log(`Creating new eye icon for ${linkValue}`);
-        let eyeIcon = document.createElement("span");
-        eyeIcon.className = "eye-icon";
-        button.parentNode.insertBefore(eyeIcon, button.nextSibling);
-      }
-    } else {
-      console.log(`Scene ${linkValue} has not been viewed.`);
-      // If the eye icon exists and the scene hasn't been viewed, remove it
-      if (existingEyeIcon) {
-        console.log(`Removing eye icon for ${linkValue}`);
-        existingEyeIcon.remove();
-      }
-    }
-  });
-}
-
-// Call the function to add eye icons
-setEyeIcon();
-
 // let isFirstLoad = true;
+
 window.addEventListener("popstate", function (event) {
   // if (isFirstLoad) {
   //   isFirstLoad = false;
@@ -104,6 +44,31 @@ function checkAllowClick(username) {
         return null;
       }
     });
+}
+
+// Function to update choice buttons
+function updateChoiceButtons() {
+  // Get all choice buttons
+  let choiceButtons = document.querySelectorAll("[data-link]");
+
+  // Iterate through each button
+  choiceButtons.forEach((button) => {
+    // Get data-link value
+    let linkValue = button.getAttribute("data-link");
+
+    console.log(`Processing button with linkValue: ${linkValue}`);
+
+    // Check choiceScenesViewed for corresponding value
+    if (choiceScenesViewed[linkValue]) {
+      console.log(`Scene ${linkValue} has been viewed.`);
+      // Prepend a check mark to the button text
+      button.innerText = "✅ " + button.innerText;
+    } else {
+      console.log(`Scene ${linkValue} has not been viewed.`);
+      // Ensure no check mark is prepended
+      button.innerText = button.innerText.replace(/^✅ /, "");
+    }
+  });
 }
 
 function loginUser() {
@@ -246,15 +211,15 @@ async function loadScene(sceneId, updateURL = false) {
     const scene = await response.json();
 
     checkViewedScenes(scene, username, function (viewedStatus) {
-      // This code will run after checkViewedScenes has finished
-      if (viewedStatus !== null) {
-        // If viewedStatus is not null, it means checkViewedScenes succeeded
-        setEyeIcon();
-      }
-      // ... (any other code you want to run after checkViewedScenes)
-
-      // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
       setTimeout(() => {
+        // This code will run after checkViewedScenes has finished
+        if (viewedStatus !== null) {
+          // If viewedStatus is not null, it means checkViewedScenes succeeded
+          updateChoiceButtons(); // <-- Updated line
+        }
+        // ... (any other code you want to run after checkViewedScenes)
+
+        // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
         // ... (rest of your code remains unchanged)
       }, 500);
     });
@@ -331,9 +296,53 @@ function logoutUser() {
   loginArea.style.display = "block";
 }
 
+function getSceneInfo(sceneId, username, callback) {
+  // Fetch scene info
+  fetch(`/get-scene?scene=${sceneId}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Network response was not ok " + response.statusText);
+      }
+      return response.json();
+    })
+    .then((scene) => {
+      // Call the callback with the fetched scene
+      callback(null, scene);
+    })
+    .catch((error) => {
+      console.error(
+        "There has been a problem with your fetch operation:",
+        error,
+      );
+      callback(error); // Call the callback with error to indicate an error
+    });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const username = localStorage.getItem("username"); // Get username from local storage
   if (username) {
+    // getSceneInfo(sceneId, username, function (error, scene) {
+    //   if (error) {
+    //     // Handle error
+    //     console.error("Failed to get scene info:", error);
+    //     return;
+    //   }
+
+    //   checkViewedScenes(scene, username, function (viewedStatus) {
+    //     setTimeout(() => {
+    //       // This code will run after checkViewedScenes has finished
+    //       if (viewedStatus !== null) {
+    //         // If viewedStatus is not null, it means checkViewedScenes succeeded
+    //         updateChoiceButtons(); // <-- Updated line
+    //       }
+    //       // ... (any other code you want to run after checkViewedScenes)
+
+    //       // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
+    //       // ... (rest of your code remains unchanged)
+    //     }, 500);
+    //   });
+    // });
+
     checkAllowClick(username).then((allowClick) => {
       console.log("Initial allow_click status:", allowClick);
     });
@@ -408,6 +417,31 @@ document.addEventListener("DOMContentLoaded", function () {
       sceneId +
       ".jpg";
     lowQualityImage.src = lowResImageURL;
+  }
+
+  // const username = localStorage.getItem("username");
+  if (username) {
+    getSceneInfo(sceneId, username, function (error, scene) {
+      if (error) {
+        // Handle error
+        console.error("Failed to get scene info:", error);
+        return;
+      }
+
+      checkViewedScenes(scene, username, function (viewedStatus) {
+        setTimeout(() => {
+          // This code will run after checkViewedScenes has finished
+          if (viewedStatus !== null) {
+            // If viewedStatus is not null, it means checkViewedScenes succeeded
+            updateChoiceButtons(); // <-- Updated line
+          }
+          // ... (any other code you want to run after checkViewedScenes)
+
+          // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
+          // ... (rest of your code remains unchanged)
+        }, 500);
+      });
+    });
   }
 
   function loadHighResImage() {
@@ -663,3 +697,60 @@ document.addEventListener("DOMContentLoaded", function () {
   loginUsername.addEventListener("keydown", handleKeydown);
   loginPassword.addEventListener("keydown", handleKeydown);
 }); // End of DOMContentLoaded
+
+// Function to add eye icon
+// function removeEyeIcon() {
+//   // Get all eye icons
+//   let eyeIcons = document.querySelectorAll(".eye-icon");
+
+//   // Iterate through each eye icon
+//   eyeIcons.forEach((icon) => {
+//     // Get data-link value from the parent button
+//     let linkValue = icon.previousSibling.getAttribute("data-link");
+
+//     // Check choiceScenesViewed for corresponding value
+//     if (!choiceScenesViewed[linkValue]) {
+//       // Hide eye icon element if the scene has not been viewed
+//       icon.style.display = "none";
+//     }
+//   });
+// }
+
+// function setEyeIcon() {
+//   // Get all choice buttons
+//   let choiceButtons = document.querySelectorAll("[data-link]");
+
+//   // Iterate through each button
+//   choiceButtons.forEach((button) => {
+//     // Get data-link value
+//     let linkValue = button.getAttribute("data-link");
+
+//     // Find the existing icon span, if any, using a querySelector
+//     let iconSpan = button.parentNode.querySelector(".icon-span");
+
+//     console.log(`Processing button with linkValue: ${linkValue}`);
+//     console.log(`Existing icon span: ${iconSpan}`);
+
+//     // Check choiceScenesViewed for corresponding value
+//     if (choiceScenesViewed[linkValue]) {
+//       console.log(`Scene ${linkValue} has been viewed.`);
+//       // If the icon span doesn't exist, create and append it
+//       if (!iconSpan) {
+//         console.log(`Creating new icon span for ${linkValue}`);
+//         iconSpan = document.createElement("span");
+//         iconSpan.className = "icon-span";
+//         button.parentNode.insertBefore(iconSpan, button.nextSibling);
+//       }
+//       iconSpan.textContent = "✅"; // Set text content to check mark
+//     } else {
+//       console.log(`Scene ${linkValue} has not been viewed.`);
+//       // If the icon span exists, set its text content to an empty string
+//       if (iconSpan) {
+//         iconSpan.textContent = ""; // Set text content to empty string
+//       }
+//     }
+//   });
+// }
+
+// Call the function to add eye icons
+// setEyeIcon();

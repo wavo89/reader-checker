@@ -24,6 +24,41 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 
+# @app.route("/")
+# def index():
+#     scene_id = request.args.get("scene", "hex1")
+#     username = request.args.get(
+#         "username"
+#     )  # Assume username is passed as a URL parameter
+#     if "scene" not in request.args:
+#         return redirect(url_for("index", scene=scene_id))
+#     with open("scenes/scenes.json", "r") as f:
+#         scenes = json.load(f)
+#         scene = scenes.get(scene_id, scenes["hex1"])
+
+#     # Fetch the viewed_scenes array for the user
+#     response = (
+#         supabase.table("user")
+#         .select("viewed_scenes")
+#         .eq("username", username)
+#         .limit(1)
+#         .execute()
+#     )
+#     data = response.get("data", [])
+#     error = response.get("error", None)
+
+#     if error:
+#         viewed_scenes = []  # or handle error in some other way
+#     elif data:
+#         viewed_scenes = data[0].get("viewed_scenes", [])
+#     else:
+#         viewed_scenes = []  # User not found, or handle this case in some other way
+
+#     return render_template(
+#         "index.html", scene=scene, scene_id=scene_id, viewed_scenes=viewed_scenes
+#     )
+
+
 @app.route("/")
 def index():
     scene_id = request.args.get("scene", "hex1")
@@ -78,7 +113,6 @@ def update_viewed_scenes():
 @app.route("/check-viewed-scenes", methods=["POST"])
 def check_viewed_scenes():
     print("check viewed")
-    # Get username and choice_scene_ids from JSON body instead of form data
     request_data = request.get_json()
     username = request_data.get("username")
     choice_scene_ids = request_data.get("choice_scene_ids", [])
@@ -86,8 +120,15 @@ def check_viewed_scenes():
     if not username:
         return jsonify(success=False, error="Username is required.")
 
-    print("username: ", username)
-    print("choice scene ids: ", choice_scene_ids)
+    choice_viewed_status, error = get_choice_viewed_status(username, choice_scene_ids)
+
+    if error:
+        return jsonify(success=False, error=error)
+
+    return jsonify(success=True, choice_viewed_status=choice_viewed_status)
+
+
+def get_choice_viewed_status(username, choice_scene_ids):
     # Fetch the viewed_scenes array for the user
     response = (
         supabase.table("user")
@@ -100,21 +141,19 @@ def check_viewed_scenes():
     error = response.get("error", None)
 
     if error:
-        return jsonify(success=False, error=str(error))
+        return None, str(error)
 
     if data:
         viewed_scenes = data[0].get("viewed_scenes", [])
     else:
-        return jsonify(success=False, error="User not found.")
+        return None, "User not found."
 
     # Check if the choice scenes have been viewed
     choice_viewed_status = {
         scene_id: scene_id in viewed_scenes for scene_id in choice_scene_ids
     }
 
-    print(choice_viewed_status)
-
-    return jsonify(success=True, choice_viewed_status=choice_viewed_status)
+    return choice_viewed_status, None
 
 
 @app.route("/login", methods=["POST"])
