@@ -245,25 +245,26 @@ async function loadScene(sceneId, updateURL = false) {
     // choiceButtons.forEach((button) => {
     //   button.disabled = !allowClick;
     // });
+    initializeChoiceButtons();
 
-    choiceButtons.forEach((button) => {
-      // Get data-link value from the button to check if the scene has been viewed
-      let linkValue = button.getAttribute("data-link");
+    // choiceButtons.forEach((button) => {
+    //   // Get data-link value from the button to check if the scene has been viewed
+    //   let linkValue = button.getAttribute("data-link");
 
-      // If the scene linked to the button has been viewed or allowClick is true, enable the button
-      console.log("link value ", linkValue);
-      console.log(
-        "choiceScenesViewed[linkValue]  ",
-        choiceScenesViewed[linkValue],
-      );
-      if (choiceScenesViewed[linkValue] || allowClick) {
-        console.log("enabling button: ", linkValue);
-        button.disabled = false;
-      } else {
-        console.log("disabling button: ", linkValue);
-        button.disabled = true;
-      }
-    });
+    //   // If the scene linked to the button has been viewed or allowClick is true, enable the button
+    //   console.log("link value ", linkValue);
+    //   console.log(
+    //     "choiceScenesViewed[linkValue]  ",
+    //     choiceScenesViewed[linkValue],
+    //   );
+    //   if (choiceScenesViewed[linkValue] || allowClick) {
+    //     console.log("enabling button: ", linkValue);
+    //     button.disabled = false;
+    //   } else {
+    //     console.log("disabling button: ", linkValue);
+    //     button.disabled = true;
+    //   }
+    // });
   }
 
   try {
@@ -304,6 +305,7 @@ async function loadScene(sceneId, updateURL = false) {
 
       // Reset the UI while the container is fully invisible
       resetUIAfterTransition();
+      initializeChoiceButtons(); // <-- Add this line
 
       contentWrapper.style.opacity = "1";
       contentWrapper.classList.remove("fadeOutAnimation");
@@ -381,32 +383,47 @@ function getSceneInfo(sceneId, username, callback) {
     });
 }
 
+function initializeChoiceButtons() {
+  const isLoggedIn = localStorage.getItem("loggedIn") === "true"; // Get login state from local storage
+  const choiceButtons = document.querySelectorAll("#choiceButtons button");
+  choiceButtons.forEach((button) => {
+    let linkValue = button.getAttribute("data-link");
+    if (!isLoggedIn) {
+      button.disabled = false; // Allow clicking the choice buttons for non-logged-in users
+    } else {
+      button.disabled = !allowClick && !choiceScenesViewed[linkValue];
+    }
+  });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
   const username = localStorage.getItem("username"); // Get username from local storage
   if (username) {
     checkAllowClick(username).then((allowClick) => {
       console.log("Initial allow_click status:", allowClick);
-      choiceButtons.forEach((button) => {
-        // Get data-link value from the button to check if the scene has been viewed
-        let linkValue = button.getAttribute("data-link");
+      initializeChoiceButtons(); // Call the function here
+      // choiceButtons.forEach((button) => {
+      //   // Get data-link value from the button to check if the scene has been viewed
+      //   let linkValue = button.getAttribute("data-link");
 
-        // If the scene linked to the button has been viewed or allowClick is true, enable the button
-        console.log("link value ", linkValue);
-        console.log(
-          "choiceScenesViewed[linkValue]  ",
-          choiceScenesViewed[linkValue],
-        );
-        if (choiceScenesViewed[linkValue] || allowClick) {
-          console.log("enabling button: ", linkValue);
-          button.disabled = false;
-        } else {
-          console.log("disabling button: ", linkValue);
-          button.disabled = true;
-        }
-      });
+      //   // If the scene linked to the button has been viewed or allowClick is true, enable the button
+      //   console.log("link value ", linkValue);
+      //   console.log(
+      //     "choiceScenesViewed[linkValue]  ",
+      //     choiceScenesViewed[linkValue],
+      //   );
+      //   if (choiceScenesViewed[linkValue] || allowClick) {
+      //     console.log("enabling button: ", linkValue);
+      //     button.disabled = false;
+      //   } else {
+      //     console.log("disabling button: ", linkValue);
+      //     button.disabled = true;
+      //   }
+      // });
     });
   } else {
     console.log("Initial allow_click status: true (not logged in)");
+    initializeChoiceButtons(); // Call the function here too
   }
 
   const loginForm = document.getElementById("loginForm");
