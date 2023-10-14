@@ -16,22 +16,29 @@ import json
 
 from utils.inspect_transcript import inspect_transcript
 
-from supabase_py import create_client
+# from supabase_py import create_client
 
-# from supabase import create_client, Client
+# import psycopg2
 
-# url: str = os.environ.get("SUPABASE_URL")
-# key: str = os.environ.get("SUPABASE_KEY")
-# supabase: Client = create_client(url, key)
-# data = supabase.table("countries").update({"country": "Indonesia", "capital_city": "Jakarta"}).eq("id", 1).execute()
+from supabase import create_client, Client
+
+url: str = os.environ.get("SUPABASE_URL")
+key: str = os.environ.get("SUPABASE_KEY")
+supabase: Client = create_client(url, key)
+# data = (
+#     supabase.table("countries")
+#     .update({"country": "Indonesia", "capital_city": "Jakarta"})
+#     .eq("id", 1)
+#     .execute()
+# )
 
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
-SUPABASE_URL = os.environ.get("SUPABASE_URL")
-SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
-supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
-
+# SUPABASE_URL = os.environ.get("SUPABASE_URL")
+# SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
+# supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
+# connection = psycopg2.connect(os.environ.get("POSTGRES_URI"))
 
 # @app.route("/")
 # def index():
@@ -94,15 +101,16 @@ def update_viewed_scenes():
         .execute()
     )
     print("response", response)
-    data = response.get("data", [])
-    error = response.get("error", None)
+    data = response.data[0]
+    # error = response.get("error", None)
     print("update scene data: ", data)
-    if error:
-        return jsonify(success=False, error=str(error))
+    # if error:
+    #     return jsonify(success=False, error=str(error))
 
     if data:
-        user_id = data[0].get("id")  # Get the user id
-        viewed_scenes = data[0].get("viewed_scenes", [])
+        user_id = data["id"]
+        viewed_scenes = data["viewed_scenes"]
+        print("Type of viewed scenes 1: ", type(viewed_scenes))
         print("viewed scenes: ", viewed_scenes)
     else:
         return jsonify(success=False, error="User not found.")
@@ -112,17 +120,39 @@ def update_viewed_scenes():
         print("scenid not in viewed")
         viewed_scenes.append(scene_id)
         print("updated viewed scenes: ", viewed_scenes)
+        print("Type of viewed scenes 2: ", type(viewed_scenes))
         response = (
             supabase.table("user")
             .update({"viewed_scenes": viewed_scenes})
             .eq("id", user_id)
             .execute()
         )
+        # try:
+        #     with connection.cursor() as cursor:
+        #         # Prepare the query and the data
+        #         query = """
+        #             UPDATE "user"
+        #             SET viewed_scenes = %s
+        #             WHERE id = %s;
+        #         """
+        #         data = (viewed_scenes, user_id)
+
+        #         # Execute the query
+        #         cursor.execute(query, data)
+
+        #     # Commit the transaction
+        #     connection.commit()
+
+        # except Exception as e:
+        #     # Rollback the transaction in case of error
+        #     connection.rollback()
+        #     print(f"An error occurred: {e}")
+        #     return jsonify(success=False, error=str(e))
 
         print("response viewed updated: ", response)
-        error = response.get("error", None)
-        if error:
-            return jsonify(success=False, error=str(error))
+        # error = response.get("error", None)
+        # if error:
+        #     return jsonify(success=False, error=str(error))
 
     return jsonify(success=True)
 
@@ -154,11 +184,12 @@ def get_choice_viewed_status(username, choice_scene_ids):
         .limit(1)
         .execute()
     )
-    data = response.get("data", [])
-    error = response.get("error", None)
+    print("howdy response: ", response)
+    data = response.data
+    # error = response.get("error", None)
 
-    if error:
-        return None, str(error)
+    # if error:
+    #     return None, str(error)
 
     if data:
         viewed_scenes = data[0].get("viewed_scenes", [])
@@ -190,13 +221,13 @@ def login():
     )
 
     print("Full response:", response)
-    data = response.get("data", [])
+    data = response.data[0]
     print("data: ", data)
-    error = response.get("error", None)
+    # error = response.get("error", None)
 
-    if error:
-        print(error)
-        return jsonify(success=False, error=str(error))
+    # if error:
+    #     print(error)
+    #     return jsonify(success=False, error=str(error))
 
     if data and "password" in data[0]:
         stored_password = data[0].get("password")
@@ -227,14 +258,21 @@ def check_allow_click():
         .execute()
     )
 
-    data = response.get("data", [])
-    error = response.get("error", None)
+    print("check response data: ", response)
+    data = response.data[
+        0
+    ]  # assuming response.data is a list and you're interested in the first item
+    count = response.count
+    print("test count: ", count)
+    # error = response.error
 
-    if error:
-        return jsonify(success=False, error=str(error))
+    # if error:
+    #     print("error response data: ", response)
+    #     # print("test error: " + error)
+    #     return jsonify(success=False, error=str(error))
 
     if data:
-        allow_click = data[0].get("allow_click", False)  # Default to False if not found
+        allow_click = data.get("allow_click", False)  # Default to False if not found
         return jsonify(success=True, allow_click=allow_click)
     else:
         return jsonify(success=False, error="User not found.")
@@ -248,13 +286,11 @@ def toggle_allow_click():
     print(f"Allow: {allow}")  # Log the allow value
     # Fetch all ids from the 'user' table
     response = supabase.table("user").select("id").execute()
-    ids = [
-        item["id"] for item in response.get("data", [])
-    ]  # Extract ids from response data
+    ids = [item["id"] for item in response.data[0]]  # Extract ids from response data
     print(f"User IDs: {ids}")  # Log the user IDs
 
     # Check for any errors in the response
-    error = response.get("error", None)
+    error = response.error
     if error:
         print(f"Error fetching user IDs: {error}")  # Log any error fetching user IDs
         return jsonify(success=False, error=str(error))
@@ -267,7 +303,7 @@ def toggle_allow_click():
             .eq("id", user_id)
             .execute()
         )
-        error = response.get("error", None)
+        error = response.error
         print(response)
         if error:
             print(
