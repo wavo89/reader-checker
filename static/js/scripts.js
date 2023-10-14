@@ -661,7 +661,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const choiceButtons = document.querySelectorAll("#choiceButtons button");
     choiceButtons.forEach((button, index) => {
-      formData.append(`choice_${index + 1}`, button.innerText);
+      let buttonText = button.innerText;
+      // Remove the checkmark and leading space if present
+      buttonText = buttonText.replace(/^✅\s*/, "");
+      formData.append(`choice_${index + 1}`, buttonText);
     });
 
     return fetch("/transcribe-audio", {
