@@ -26,6 +26,7 @@ history.pushState = function () {
 
 function checkAllowClick(username) {
   if (!username) {
+    allowClick = true;
     console.log("Allow Click Status: true (not logged in)");
     return Promise.resolve(true);
   }
@@ -110,6 +111,7 @@ function loginUser() {
           .addEventListener("click", logoutUser);
         localStorage.setItem("loggedIn", "true"); // Save login status to local storage
         localStorage.setItem("username", username); // Save username to local storage
+        window.location.reload();
         checkAllowClick(username); // Check allow_click status after login
       } else {
         const errorMessage = document.getElementById("loginError");
@@ -326,7 +328,9 @@ function preloadImage(sceneId, quality = "low") {
 }
 
 function logoutUser() {
-  localStorage.removeItem("loggedIn"); // Remove login status from local storage
+  localStorage.setItem("loggedIn", false); // Set login status in local storage to false
+
+  // localStorage.removeItem("loggedIn"); // Remove login status from local storage
   localStorage.removeItem("username"); // Remove login status from local storage
 
   const userDisplay = document.getElementById("userDisplay");
@@ -361,18 +365,11 @@ function initializeChoiceButtons() {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true"; // Get login state from local storage
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
   choiceButtons.forEach((button) => {
-    let linkValue = button.getAttribute("data-link");
-    if (!isLoggedIn) {
-      button.disabled = false; // Allow clicking the choice buttons for non-logged-in users
-      console.log(`Button ${linkValue} is enabled for non-logged-in users.`);
-    } else {
-      button.disabled = !allowClick && !choiceScenesViewed[linkValue];
-      console.log(
-        `Button ${linkValue} is ${
-          button.disabled ? "disabled" : "enabled"
-        } for logged-in users.`,
-      );
-    }
+    // If user is logged out, the button should always be enabled.
+    // If user is logged in, the button is enabled only if allowClick is true
+    // or if this scene has been viewed before (according to choiceScenesViewed).
+    button.disabled =
+      isLoggedIn && !allowClick && !choiceScenesViewed[linkValue];
   });
 }
 
