@@ -110,6 +110,8 @@ def update_viewed_scenes():
     if data:
         user_id = data["id"]
         viewed_scenes = data["viewed_scenes"]
+        if viewed_scenes is None:
+            viewed_scenes = []  # Initialize as empty list if None
         print("Type of viewed scenes 1: ", type(viewed_scenes))
         print("viewed scenes: ", viewed_scenes)
     else:
@@ -192,7 +194,12 @@ def get_choice_viewed_status(username, choice_scene_ids):
     #     return None, str(error)
 
     if data:
-        viewed_scenes = data[0].get("viewed_scenes", [])
+        user_data = data[0]
+        viewed_scenes = user_data["viewed_scenes"]
+        if viewed_scenes is None:
+            viewed_scenes = []
+
+        print("viewed scenes1: ", viewed_scenes)
     else:
         return None, "User not found."
 
