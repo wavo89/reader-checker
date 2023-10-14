@@ -16,9 +16,9 @@ import json
 
 from utils.inspect_transcript import inspect_transcript
 
-# from supabase_py import create_client
+from supabase_py import create_client
 
-from supabase import create_client, Client
+# from supabase import create_client, Client
 
 # url: str = os.environ.get("SUPABASE_URL")
 # key: str = os.environ.get("SUPABASE_KEY")
