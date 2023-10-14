@@ -267,6 +267,18 @@ async function loadScene(sceneId, updateURL = false) {
       // Reset the UI while the container is fully invisible
       resetUIAfterTransition();
 
+      choiceButtons.forEach((button) => {
+        // Get data-link value from the button to check if the scene has been viewed
+        let linkValue = button.getAttribute("data-link");
+
+        // If the scene linked to the button has been viewed or allowClick is true, enable the button
+        if (choiceScenesViewed[linkValue] || allowClick) {
+          button.disabled = false;
+        } else {
+          button.disabled = true;
+        }
+      });
+
       contentWrapper.style.opacity = "1";
       contentWrapper.classList.remove("fadeOutAnimation");
       contentWrapper.classList.add("fadeInAnimation");
