@@ -25,19 +25,16 @@ history.pushState = function () {
 };
 
 function checkAllowClick(username) {
-  // If the user is not logged in, set allow_click to true and exit early.
   if (!username) {
     console.log("Allow Click Status: true (not logged in)");
-    return Promise.resolve(true); // Resolve immediately with true.
+    return Promise.resolve(true);
   }
-
-  // Otherwise, proceed with the existing logic for logged-in users.
   return fetch(`/check-allow-click?username=${username}`)
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
         console.log("Allow Click Status:", data.allow_click);
-        allowClick = data.allow_click; // Update the global variable
+        allowClick = data.allow_click;
         return data.allow_click;
       } else {
         console.error(data.error);
@@ -390,8 +387,14 @@ function initializeChoiceButtons() {
     let linkValue = button.getAttribute("data-link");
     if (!isLoggedIn) {
       button.disabled = false; // Allow clicking the choice buttons for non-logged-in users
+      console.log(`Button ${linkValue} is enabled for non-logged-in users.`);
     } else {
       button.disabled = !allowClick && !choiceScenesViewed[linkValue];
+      console.log(
+        `Button ${linkValue} is ${
+          button.disabled ? "disabled" : "enabled"
+        } for logged-in users.`,
+      );
     }
   });
 }
@@ -741,6 +744,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   document.querySelectorAll("#choiceButtons button").forEach((button) => {
     button.addEventListener("click", function (event) {
+      console.log("Choice button clicked:", button.getAttribute("data-link"));
       const sceneLink = button.getAttribute("data-link");
       navigateToChoice(button, event); // Pass the event to the function
       preloadImage(sceneLink, "high");
