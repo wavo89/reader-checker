@@ -101,18 +101,18 @@ function loginUser() {
     .then((response) => response.json())
     .then((data) => {
       if (data.success) {
-        const loginArea = document.getElementById("loginArea");
-        loginArea.style.display = "none";
-        const userDisplay = document.getElementById("userDisplay");
-        userDisplay.innerHTML = `${username}<span id="logoutLink" style="cursor:pointer;"> | logout</span>`;
-        userDisplay.style.display = "block";
-        document
-          .getElementById("logoutLink")
-          .addEventListener("click", logoutUser);
+        // const loginArea = document.getElementById("loginArea");
+        // loginArea.style.display = "none";
+        // const userDisplay = document.getElementById("userDisplay");
+        // userDisplay.innerHTML = `${username}<span id="logoutLink" style="cursor:pointer;"> | logout</span>`;
+        // userDisplay.style.display = "block";
+        // document
+        //   .getElementById("logoutLink")
+        //   .addEventListener("click", logoutUser);
         localStorage.setItem("loggedIn", "true"); // Save login status to local storage
         localStorage.setItem("username", username); // Save username to local storage
         window.location.reload();
-        checkAllowClick(username); // Check allow_click status after login
+        // checkAllowClick(username); // Check allow_click status after login
       } else {
         const errorMessage = document.getElementById("loginError");
         errorMessage.innerText = data.error;
@@ -337,6 +337,8 @@ function logoutUser() {
   userDisplay.style.display = "none";
   const loginArea = document.getElementById("loginArea");
   loginArea.style.display = "block";
+  // window.location.reload();
+  window.location.reload();
 }
 
 function getSceneInfo(sceneId, username, callback) {
@@ -423,12 +425,15 @@ document.addEventListener("DOMContentLoaded", function () {
   document.addEventListener("click", function (event) {
     if (event.target.id === "logoutLink") {
       event.preventDefault();
+      localStorage.setItem("loggedIn", false); // Set login status in local storage to false
       localStorage.removeItem("loggedIn"); // Clear login state from local storage
       localStorage.removeItem("username"); // Clear username from local storage
-      const userDisplay = document.getElementById("userDisplay");
-      userDisplay.style.display = "none";
-      const loginArea = document.getElementById("loginArea");
-      loginArea.style.display = "block";
+      window.location.reload();
+
+      // const userDisplay = document.getElementById("userDisplay");
+      // userDisplay.style.display = "none";
+      // const loginArea = document.getElementById("loginArea");
+      // loginArea.style.display = "block";
     }
   });
 
