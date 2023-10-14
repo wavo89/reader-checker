@@ -367,6 +367,7 @@ function initializeChoiceButtons() {
   const isLoggedIn = localStorage.getItem("loggedIn") === "true"; // Get login state from local storage
   const choiceButtons = document.querySelectorAll("#choiceButtons button");
   choiceButtons.forEach((button) => {
+    const linkValue = button.getAttribute("data-link");
     // If user is logged out, the button should always be enabled.
     // If user is logged in, the button is enabled only if allowClick is true
     // or if this scene has been viewed before (according to choiceScenesViewed).
@@ -374,7 +375,6 @@ function initializeChoiceButtons() {
       isLoggedIn && !allowClick && !choiceScenesViewed[linkValue];
   });
 }
-
 document.addEventListener("DOMContentLoaded", function () {
   const username = localStorage.getItem("username"); // Get username from local storage
   if (username) {
