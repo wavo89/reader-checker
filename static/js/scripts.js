@@ -781,6 +781,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add the keydown event listener to both input fields
   loginUsername.addEventListener("keydown", handleKeydown);
   loginPassword.addEventListener("keydown", handleKeydown);
+  document.getElementById("recordButton").disabled = false;
 }); // End of DOMContentLoaded
 
 // Function to add eye icon
