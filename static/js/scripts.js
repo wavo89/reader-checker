@@ -69,6 +69,25 @@ function updateChoiceButtons() {
       button.innerText = button.innerText.replace(/^✅ /, "");
     }
   });
+
+  choiceButtons.forEach((button) => {
+    // Get data-link value from the button to check if the scene has been viewed
+    let linkValue = button.getAttribute("data-link");
+
+    // If the scene linked to the button has been viewed or allowClick is true, enable the button
+    console.log("link value ", linkValue);
+    console.log(
+      "choiceScenesViewed[linkValue]  ",
+      choiceScenesViewed[linkValue],
+    );
+    if (choiceScenesViewed[linkValue] || allowClick) {
+      console.log("enabling button: ", linkValue);
+      button.disabled = false;
+    } else {
+      console.log("disabling button: ", linkValue);
+      button.disabled = true;
+    }
+  });
 }
 
 function loginUser() {
@@ -223,8 +242,27 @@ async function loadScene(sceneId, updateURL = false) {
     updateViewedScenes(username, sceneId);
     allowClick = await checkAllowClick(username);
     // Enable or disable the choice buttons based on allow_click status
+    // choiceButtons.forEach((button) => {
+    //   button.disabled = !allowClick;
+    // });
+
     choiceButtons.forEach((button) => {
-      button.disabled = !allowClick;
+      // Get data-link value from the button to check if the scene has been viewed
+      let linkValue = button.getAttribute("data-link");
+
+      // If the scene linked to the button has been viewed or allowClick is true, enable the button
+      console.log("link value ", linkValue);
+      console.log(
+        "choiceScenesViewed[linkValue]  ",
+        choiceScenesViewed[linkValue],
+      );
+      if (choiceScenesViewed[linkValue] || allowClick) {
+        console.log("enabling button: ", linkValue);
+        button.disabled = false;
+      } else {
+        console.log("disabling button: ", linkValue);
+        button.disabled = true;
+      }
     });
   }
 
@@ -266,18 +304,6 @@ async function loadScene(sceneId, updateURL = false) {
 
       // Reset the UI while the container is fully invisible
       resetUIAfterTransition();
-
-      choiceButtons.forEach((button) => {
-        // Get data-link value from the button to check if the scene has been viewed
-        let linkValue = button.getAttribute("data-link");
-
-        // If the scene linked to the button has been viewed or allowClick is true, enable the button
-        if (choiceScenesViewed[linkValue] || allowClick) {
-          button.disabled = false;
-        } else {
-          button.disabled = true;
-        }
-      });
 
       contentWrapper.style.opacity = "1";
       contentWrapper.classList.remove("fadeOutAnimation");
@@ -358,30 +384,26 @@ function getSceneInfo(sceneId, username, callback) {
 document.addEventListener("DOMContentLoaded", function () {
   const username = localStorage.getItem("username"); // Get username from local storage
   if (username) {
-    // getSceneInfo(sceneId, username, function (error, scene) {
-    //   if (error) {
-    //     // Handle error
-    //     console.error("Failed to get scene info:", error);
-    //     return;
-    //   }
-
-    //   checkViewedScenes(scene, username, function (viewedStatus) {
-    //     setTimeout(() => {
-    //       // This code will run after checkViewedScenes has finished
-    //       if (viewedStatus !== null) {
-    //         // If viewedStatus is not null, it means checkViewedScenes succeeded
-    //         updateChoiceButtons(); // <-- Updated line
-    //       }
-    //       // ... (any other code you want to run after checkViewedScenes)
-
-    //       // Fade in the updated content after a slight delay (to ensure the image transition is smooth)
-    //       // ... (rest of your code remains unchanged)
-    //     }, 500);
-    //   });
-    // });
-
     checkAllowClick(username).then((allowClick) => {
       console.log("Initial allow_click status:", allowClick);
+      choiceButtons.forEach((button) => {
+        // Get data-link value from the button to check if the scene has been viewed
+        let linkValue = button.getAttribute("data-link");
+
+        // If the scene linked to the button has been viewed or allowClick is true, enable the button
+        console.log("link value ", linkValue);
+        console.log(
+          "choiceScenesViewed[linkValue]  ",
+          choiceScenesViewed[linkValue],
+        );
+        if (choiceScenesViewed[linkValue] || allowClick) {
+          console.log("enabling button: ", linkValue);
+          button.disabled = false;
+        } else {
+          console.log("disabling button: ", linkValue);
+          button.disabled = true;
+        }
+      });
     });
   } else {
     console.log("Initial allow_click status: true (not logged in)");
@@ -499,25 +521,27 @@ document.addEventListener("DOMContentLoaded", function () {
           const nextSceneId = button.getAttribute("data-link");
           return preloadImage(nextSceneId, "high");
         }),
-      ).then(() => {
-        if (username) {
-          checkAllowClick(username).then((allowClick) => {
-            // Enable or disable the choice buttons based on allow_click status
-            choiceButtons.forEach((button) => {
-              button.disabled = !allowClick;
-            });
-            document.getElementById("recordButton").disabled = false;
-            isTransitioning = false; // Set this flag to false here, after the preloading is done
-          });
-        } else {
-          // If not logged in, enable interactions as usual
-          choiceButtons.forEach((button) => {
-            button.disabled = false;
-          });
-          document.getElementById("recordButton").disabled = false;
-          isTransitioning = false; // Set this flag to false here, after the preloading is done
-        }
-      });
+      );
+
+      // ).then(() => {
+      //   if (username) {
+      //     checkAllowClick(username).then((allowClick) => {
+      //       // Enable or disable the choice buttons based on allow_click status
+      //       choiceButtons.forEach((button) => {
+      //         button.disabled = !allowClick;
+      //       });
+      //       document.getElementById("recordButton").disabled = false;
+      //       isTransitioning = false; // Set this flag to false here, after the preloading is done
+      //     });
+      //   } else {
+      //     // If not logged in, enable interactions as usual
+      //     choiceButtons.forEach((button) => {
+      //       button.disabled = false;
+      //     });
+      //     document.getElementById("recordButton").disabled = false;
+      //     isTransitioning = false; // Set this flag to false here, after the preloading is done
+      //   }
+      // });
     };
 
     highQualityImage.onerror = function () {
