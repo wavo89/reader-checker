@@ -229,9 +229,9 @@ def login():
     #     print(error)
     #     return jsonify(success=False, error=str(error))
 
-    if data and "password" in data[0]:
-        stored_password = data[0].get("password")
-        allow_click = data[0].get("allow_click", False)  # Default to False if not found
+    if data and "password" in data:
+        stored_password = data["password"]
+        allow_click = data["allow_click"]
     else:
         return jsonify(success=False, error="User not found.")
 
