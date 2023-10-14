@@ -238,30 +238,7 @@ async function loadScene(sceneId, updateURL = false) {
   if (username) {
     updateViewedScenes(username, sceneId);
     allowClick = await checkAllowClick(username);
-    // Enable or disable the choice buttons based on allow_click status
-    // choiceButtons.forEach((button) => {
-    //   button.disabled = !allowClick;
-    // });
     initializeChoiceButtons();
-
-    // choiceButtons.forEach((button) => {
-    //   // Get data-link value from the button to check if the scene has been viewed
-    //   let linkValue = button.getAttribute("data-link");
-
-    //   // If the scene linked to the button has been viewed or allowClick is true, enable the button
-    //   console.log("link value ", linkValue);
-    //   console.log(
-    //     "choiceScenesViewed[linkValue]  ",
-    //     choiceScenesViewed[linkValue],
-    //   );
-    //   if (choiceScenesViewed[linkValue] || allowClick) {
-    //     console.log("enabling button: ", linkValue);
-    //     button.disabled = false;
-    //   } else {
-    //     console.log("disabling button: ", linkValue);
-    //     button.disabled = true;
-    //   }
-    // });
   }
 
   try {
@@ -541,27 +518,10 @@ document.addEventListener("DOMContentLoaded", function () {
           const nextSceneId = button.getAttribute("data-link");
           return preloadImage(nextSceneId, "high");
         }),
-      );
-
-      // ).then(() => {
-      //   if (username) {
-      //     checkAllowClick(username).then((allowClick) => {
-      //       // Enable or disable the choice buttons based on allow_click status
-      //       choiceButtons.forEach((button) => {
-      //         button.disabled = !allowClick;
-      //       });
-      //       document.getElementById("recordButton").disabled = false;
-      //       isTransitioning = false; // Set this flag to false here, after the preloading is done
-      //     });
-      //   } else {
-      //     // If not logged in, enable interactions as usual
-      //     choiceButtons.forEach((button) => {
-      //       button.disabled = false;
-      //     });
-      //     document.getElementById("recordButton").disabled = false;
-      //     isTransitioning = false; // Set this flag to false here, after the preloading is done
-      //   }
-      // });
+      ).then(() => {
+        isTransitioning = false;
+        document.getElementById("recordButton").enabled = true;
+      });
     };
 
     highQualityImage.onerror = function () {
@@ -781,62 +741,8 @@ document.addEventListener("DOMContentLoaded", function () {
   // Add the keydown event listener to both input fields
   loginUsername.addEventListener("keydown", handleKeydown);
   loginPassword.addEventListener("keydown", handleKeydown);
-  document.getElementById("recordButton").disabled = false;
+
+  document.getElementById("recordButton").enabled = true;
+
+  // isTransitioning = false; // Set isTransitioning to false after setup
 }); // End of DOMContentLoaded
-
-// Function to add eye icon
-// function removeEyeIcon() {
-//   // Get all eye icons
-//   let eyeIcons = document.querySelectorAll(".eye-icon");
-
-//   // Iterate through each eye icon
-//   eyeIcons.forEach((icon) => {
-//     // Get data-link value from the parent button
-//     let linkValue = icon.previousSibling.getAttribute("data-link");
-
-//     // Check choiceScenesViewed for corresponding value
-//     if (!choiceScenesViewed[linkValue]) {
-//       // Hide eye icon element if the scene has not been viewed
-//       icon.style.display = "none";
-//     }
-//   });
-// }
-
-// function setEyeIcon() {
-//   // Get all choice buttons
-//   let choiceButtons = document.querySelectorAll("[data-link]");
-
-//   // Iterate through each button
-//   choiceButtons.forEach((button) => {
-//     // Get data-link value
-//     let linkValue = button.getAttribute("data-link");
-
-//     // Find the existing icon span, if any, using a querySelector
-//     let iconSpan = button.parentNode.querySelector(".icon-span");
-
-//     console.log(`Processing button with linkValue: ${linkValue}`);
-//     console.log(`Existing icon span: ${iconSpan}`);
-
-//     // Check choiceScenesViewed for corresponding value
-//     if (choiceScenesViewed[linkValue]) {
-//       console.log(`Scene ${linkValue} has been viewed.`);
-//       // If the icon span doesn't exist, create and append it
-//       if (!iconSpan) {
-//         console.log(`Creating new icon span for ${linkValue}`);
-//         iconSpan = document.createElement("span");
-//         iconSpan.className = "icon-span";
-//         button.parentNode.insertBefore(iconSpan, button.nextSibling);
-//       }
-//       iconSpan.textContent = "✅"; // Set text content to check mark
-//     } else {
-//       console.log(`Scene ${linkValue} has not been viewed.`);
-//       // If the icon span exists, set its text content to an empty string
-//       if (iconSpan) {
-//         iconSpan.textContent = ""; // Set text content to empty string
-//       }
-//     }
-//   });
-// }
-
-// Call the function to add eye icons
-// setEyeIcon();
