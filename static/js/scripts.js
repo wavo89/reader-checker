@@ -176,6 +176,30 @@ function checkViewedScenes(scene, username, callback) {
   }
 }
 
+function updateViewedScenes(username, sceneId) {
+  fetch("/update-viewed-scenes", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: new URLSearchParams({
+      username: username,
+      scene_id: sceneId,
+    }),
+  })
+    .then((response) => response.json())
+    .then((responseData) => {
+      if (responseData.success) {
+        console.log("Viewed scenes updated successfully.");
+      } else {
+        console.error("Error updating viewed scenes:", responseData.error);
+      }
+    })
+    .catch((error) => {
+      console.error("Error updating viewed scenes:", error);
+    });
+}
+
 async function loadScene(sceneId, updateURL = false) {
   console.log("loadScene called with:", sceneId, "updateURL:", updateURL);
 
@@ -196,6 +220,7 @@ async function loadScene(sceneId, updateURL = false) {
   const username = localStorage.getItem("username");
   let allowClick = false;
   if (username) {
+    updateViewedScenes(username, sceneId);
     allowClick = await checkAllowClick(username);
     // Enable or disable the choice buttons based on allow_click status
     choiceButtons.forEach((button) => {

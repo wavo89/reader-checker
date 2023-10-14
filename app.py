@@ -15,7 +15,16 @@ from utils.calculate_accuracy import calculate_accuracy, preprocess_text
 import json
 
 from utils.inspect_transcript import inspect_transcript
-from supabase_py import create_client
+
+# from supabase_py import create_client
+
+from supabase import create_client, Client
+
+# url: str = os.environ.get("SUPABASE_URL")
+# key: str = os.environ.get("SUPABASE_KEY")
+# supabase: Client = create_client(url, key)
+# data = supabase.table("countries").update({"country": "Indonesia", "capital_city": "Jakarta"}).eq("id", 1).execute()
+
 
 app = Flask(__name__)
 openai.api_key = os.getenv("OPENAI_API_KEY")
@@ -72,37 +81,45 @@ def index():
 
 @app.route("/update-viewed-scenes", methods=["POST"])
 def update_viewed_scenes():
+    print("hi")
     username = request.form.get("username")
     scene_id = request.form.get("scene_id")
-
-    # Fetch the current viewed_scenes array for the user
+    print("username + sceneid: ", username, scene_id)
+    # Fetch the current viewed_scenes array and user id for the user
     response = (
         supabase.table("user")
-        .select("viewed_scenes")
+        .select("id, viewed_scenes")  # Modify this line to also select 'id'
         .eq("username", username)
         .limit(1)
         .execute()
     )
+    print("response", response)
     data = response.get("data", [])
     error = response.get("error", None)
-
+    print("update scene data: ", data)
     if error:
         return jsonify(success=False, error=str(error))
 
     if data:
+        user_id = data[0].get("id")  # Get the user id
         viewed_scenes = data[0].get("viewed_scenes", [])
+        print("viewed scenes: ", viewed_scenes)
     else:
         return jsonify(success=False, error="User not found.")
 
     # Update the viewed_scenes array if the scene_id is not already in it
     if scene_id not in viewed_scenes:
+        print("scenid not in viewed")
         viewed_scenes.append(scene_id)
+        print("updated viewed scenes: ", viewed_scenes)
         response = (
             supabase.table("user")
             .update({"viewed_scenes": viewed_scenes})
-            .eq("username", username)
+            .eq("id", user_id)
             .execute()
         )
+
+        print("response viewed updated: ", response)
         error = response.get("error", None)
         if error:
             return jsonify(success=False, error=str(error))
