@@ -32,7 +32,7 @@
     "prompt": "A dimly lit cavern with ancient murals showcasing Martians and space monsters.",
     "choices": [
       {"text": "Venture deeper into the cavern; there's more to uncover.", "link": "h894dab5"},
-      {"text": "Return outside and warn the crew about these findings.", "link": "i9a5ebc6"}
+      {"text": "Return outside and warn the crew about these findings.", "link": "a1f8e3b4"}
     ]
   },
   "e59ca782": {
@@ -69,15 +69,6 @@
     "choices": [
       {"text": "Collect a water sample; its properties are unique.", "link": "a1f8e3b4"},
       {"text": "Continue exploring; the lake might have secrets.", "link": "a1f8e3b4"}
-    ]
-  },
-  "i9a5ebc6": {
-    "text": "Back on the 'Astra', Lina's findings spark a debate. Some crew members want to continue the mission, while others urge caution.",
-    "image": "https://storyscenes.blob.core.windows.net/image1/i9a5ebc6.jpg",
-    "prompt": "A group of astronauts in heated discussion inside a spaceship.",
-    "choices": [
-      {"text": "Continue the mission; there's more to discover.", "link": "a1f8e3b4"},
-      {"text": "Leave Mars; it's too risky to stay.", "link": "a1f8e3b4"}
     ]
   },
   "j0b6fcf7": {
