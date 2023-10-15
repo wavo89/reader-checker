@@ -74,15 +74,17 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 #         "index.html", scene=scene, scene_id=scene_id, viewed_scenes=viewed_scenes
 #     )
 
+initial_scene = "a1f8e3b4"
+
 
 @app.route("/")
 def index():
-    scene_id = request.args.get("scene", "hex1")
+    scene_id = request.args.get("scene", initial_scene)
     if "scene" not in request.args:
         return redirect(url_for("index", scene=scene_id))
     with open("scenes/scenes.json", "r") as f:
         scenes = json.load(f)
-        scene = scenes.get(scene_id, scenes["hex1"])
+        scene = scenes.get(scene_id, scenes[initial_scene])
     return render_template("index.html", scene=scene, scene_id=scene_id)
 
 
@@ -326,10 +328,10 @@ def toggle_allow_click():
 
 @app.route("/get-scene")
 def get_scene():
-    scene_id = request.args.get("scene", "hex1")
+    scene_id = request.args.get("scene", initial_scene)
     with open("scenes/scenes.json", "r") as f:
         scenes = json.load(f)
-        scene = scenes.get(scene_id, scenes["hex1"])
+        scene = scenes.get(scene_id, scenes[initial_scene])
     return jsonify(scene)
 
 

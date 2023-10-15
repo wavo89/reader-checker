@@ -1,101 +1,101 @@
 {
-  "hex1": {
-    "text": "We seem to have drifted onto an island.",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex1.jpg",
-    "prompt": "A sandy beach with footprints leading inland, a dense forest in the background, and a makeshift raft washed ashore.",
+  "a1f8e3b4": {
+    "text": "Captain Lina disembarks from the \"Astra\" on Mars. The horizon is painted with hues of orange, but two oddities strike her immediately: a pulsating beacon in the distance and a mysterious artifact nearby.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/a1f8e3b4.jpg",
+    "prompt": "A Martian landscape with a spacecraft, a distant beacon, and a shiny artifact.",
     "choices": [
-      {"text": "This is so cool, let's explore the island.", "link": "hex2"},
-      {"text": "Build a shelter", "link": "hex3"}
+      {"text": "Approach the beacon; it could be a sign.", "link": "b29ce45d"},
+      {"text": "Investigate the artifact first; it's closer.", "link": "c314f562"}
     ]
   },
-  "hex2": {
-    "text": "You decide to explore the island...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex2.jpg",
-    "prompt": "A trail splitting into two: one leading to a tall tree with sturdy branches, the other to a pristine beach with gentle waves.",
+  "b29ce45d": {
+    "text": "Drawn to the beacon, Lina finds a small device emitting a signal. It's neither human nor familiar. The beacon's pattern seems to point towards two locations: a cavern and a hill.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/b29ce45d.jpg",
+    "prompt": "A beacon device on Martian ground with a pathway splitting towards a cavern and a hill.",
     "choices": [
-      {"text": "Climb a tree", "link": "hex4"},
-      {"text": "Go to the beach", "link": "hex5"}
+      {"text": "Enter the cavern; the signal is stronger inside.", "link": "d43bf69e"},
+      {"text": "Climb the hill; I might get a better vantage point.", "link": "e59ca782"}
     ]
   },
-  "hex3": {
-    "text": "You decide to build a shelter...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex3.jpg",
-    "prompt": "A clearing surrounded by trees, with a pile of logs, large leaves, and a flat stone wall suitable for a shelter's backdrop.",
+  "c314f562": {
+    "text": "The artifact is a crystalline object with inscriptions. Touching it, Lina gets visions: of a colossal space monster dormant beneath Mars and of a lost alien city.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/c314f562.jpg",
+    "prompt": "A glowing crystal with ancient inscriptions against a Martian backdrop.",
     "choices": [
-      {"text": "Gather materials", "link": "hex6"},
-      {"text": "Find a suitable location", "link": "hex7"}
+      {"text": "Search for the dormant monster; it's crucial to know its location.", "link": "f672b893"},
+      {"text": "Seek the lost alien city; it may hold answers.", "link": "g783c9a4"}
     ]
   },
-  "hex4": {
-    "text": "You climb a tree and see...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex4.jpg",
-    "prompt": "View from atop a tree: a distant waterfall cascading down rocks, a dark cave entrance, a towering mountain, and a thick canopy of a forest.",
+  "d43bf69e": {
+    "text": "Inside the cavern, Lina discovers murals depicting an ancient Martian civilization. They coexisted with, and perhaps worshipped, space monsters.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/d43bf69e.jpg",
+    "prompt": "A dimly lit cavern with ancient murals showcasing Martians and space monsters.",
     "choices": [
-      {"text": "A waterfall", "link": "hex8"},
-      {"text": "A cave", "link": "hex9"}
+      {"text": "Venture deeper into the cavern; there's more to uncover.", "link": "h894dab5"},
+      {"text": "Return outside and warn the crew about these findings.", "link": "i9a5ebc6"}
     ]
   },
-  "hex5": {
-    "text": "You go to the beach and find...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex5.jpg",
-    "prompt": "A sunlit beach: a half-buried shipwreck, a sealed bottle with a note inside, a tall coconut tree with ripe coconuts, and a discarded fishing net.",
+  "e59ca782": {
+    "text": "From the hilltop, Lina spots an approaching dust storm and a crashed ship, possibly alien in origin.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/e59ca782.jpg",
+    "prompt": "A panoramic view from a hill showing a large dust storm and a crashed ship.",
     "choices": [
-      {"text": "A shipwreck", "link": "hex12"},
-      {"text": "A message in a bottle", "link": "hex13"}
+      {"text": "Investigate the crashed ship; there might be survivors.", "link": "j0b6fcf7"},
+      {"text": "Hurry back to 'Astra' before the storm hits.", "link": "k1c7gdf8"}
     ]
   },
-  "hex6": {
-    "text": "You gather materials and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex6.jpg",
-    "prompt": "A collection of resources: dry wood, flint stones, long vines, and sharp-edged rocks, hinting at tool crafting or fire-making.",
+  "f672b893": {
+    "text": "Lina uncovers the dormant space monster, a behemoth sleeping under layers of rock. A device nearby seems to control its slumber.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/f672b893.jpg",
+    "prompt": "A vast creature beneath rocks with a controlling device next to it.",
     "choices": [
-      {"text": "Build a fire", "link": "hex1"},
-      {"text": "Craft tools", "link": "hex1"}
+      {"text": "Attempt to communicate with the monster.", "link": "a1f8e3b4"},
+      {"text": "Deactivate the device; it might be a threat.", "link": "a1f8e3b4"}
     ]
   },
-  "hex7": {
-    "text": "You find a suitable location and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex7.jpg",
-    "prompt": "A shaded spot near a freshwater stream, with soft ground for digging and a canopy of trees overhead.",
+  "g783c9a4": {
+    "text": "The lost alien city is magnificent and eerily preserved. Statues depict aliens and humans interacting peacefully.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/g783c9a4.jpg",
+    "prompt": "A grand alien city with intricate statues narrating an interspecies friendship.",
     "choices": [
-      {"text": "Set up camp", "link": "hex1"},
-      {"text": "Dig a well", "link": "hex1"}
+      {"text": "Explore the central temple; it's the most prominent structure.", "link": "a1f8e3b4"},
+      {"text": "Look for technological archives; they might have data.", "link": "a1f8e3b4"}
     ]
   },
-  "hex8": {
-    "text": "You approach the waterfall and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex8.jpg",
-    "prompt": "A cascading waterfall with a clear pool at its base, surrounded by moss-covered rocks and colorful fish swimming about.",
+  "h894dab5": {
+    "text": "Deeper into the cavern, Lina stumbles upon an underground lake. The water holds mysterious properties, seemingly connected to the space monsters.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/h894dab5.jpg",
+    "prompt": "An underground Martian lake radiating a mystical aura.",
     "choices": [
-      {"text": "Take a swim", "link": "hex1"},
-      {"text": "Look for fish", "link": "hex1"}
+      {"text": "Collect a water sample; its properties are unique.", "link": "a1f8e3b4"},
+      {"text": "Continue exploring; the lake might have secrets.", "link": "a1f8e3b4"}
     ]
   },
-  "hex9": {
-    "text": "You enter the cave and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex9.jpg",
-    "prompt": "A dimly lit cave with stalactites hanging from the ceiling, faint glimmers of light reflecting off mineral deposits, and echoes of dripping water.",
+  "i9a5ebc6": {
+    "text": "Back on the 'Astra', Lina's findings spark a debate. Some crew members want to continue the mission, while others urge caution.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/i9a5ebc6.jpg",
+    "prompt": "A group of astronauts in heated discussion inside a spaceship.",
     "choices": [
-      {"text": "Light a torch", "link": "hex1"},
-      {"text": "Sing a song", "link": "hex1"}
+      {"text": "Continue the mission; there's more to discover.", "link": "a1f8e3b4"},
+      {"text": "Leave Mars; it's too risky to stay.", "link": "a1f8e3b4"}
     ]
   },
-  "hex12": {
-    "text": "You explore the shipwreck and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex12.jpg",
-    "prompt": "The remnants of a wooden ship, half-buried in sand, with scattered gold coins, a rusty compass, and a curious parrot perched on a broken mast.",
+  "j0b6fcf7": {
+    "text": "The crashed ship is abandoned but has alien tech. Lina salvages a device that translates Martian language.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/j0b6fcf7.jpg",
+    "prompt": "The remnants of a crashed alien ship amidst Martian dunes.",
     "choices": [
-      {"text": "Find treasure", "link": "hex1"},
-      {"text": "Rescue a parrot", "link": "hex1"}
+      {"text": "Use the device to decipher the artifact's inscriptions.", "link": "a1f8e3b4"},
+      {"text": "Broadcast a message in Martian; someone might answer.", "link": "a1f8e3b4"}
     ]
   },
-  "hex13": {
-    "text": "You read the message in the bottle and...",
-    "image": "https://storyscenes.blob.core.windows.net/image1/hex13.jpg",
-    "prompt": "A rolled-up parchment taken out of a bottle, with faded ink drawings of a map and cryptic symbols, suggesting a hidden treasure or a tale of adventure.",
+  "k1c7gdf8": {
+    "text": "Rushing back, Lina manages to get the 'Astra' airborne just as the storm engulfs the area. The ordeal strengthens the crew's bond.",
+    "image": "https://storyscenes.blob.core.windows.net/image1/k1c7gdf8.jpg",
+    "prompt": "A spaceship ascending against the backdrop of a raging dust storm.",
     "choices": [
-      {"text": "Follow the map", "link": "hex1"},
-      {"text": "Write a reply", "link": "hex1"}
+      {"text": "Set course for Earth; it's time to head home.", "link": "a1f8e3b4"},
+      {"text": "Land on another part of Mars; the mission isn't over.", "link": "a1f8e3b4"}
     ]
   }
 }
