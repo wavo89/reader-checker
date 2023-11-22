@@ -1,2 +1,1 @@
-# voice-reader-checker
-# reader-checker
+I'm aware theres a lot of spaghetti code here, was more just testing the limits of what I could do in vanilla JS to set up an interactive UI that is also connected to AI. Don't plan to refactor, if I continue project will probably rewrite from scratch and possibly use some frontend tooling.
